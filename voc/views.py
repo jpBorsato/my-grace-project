@@ -37,7 +37,7 @@ def status(request):
             "database": {
                 "version": db_version_val,
                 "max_connections": db_max_conn_val,
-                "openned_connections": db_open_conn_val,
+                "opened_connections": db_open_conn_val,
             },
         },
     }
