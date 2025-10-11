@@ -29,7 +29,10 @@ SECRET_KEY = os.getenv("DJANGO_SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False if os.getenv("ENV") == 'production' else True
 
-ALLOWED_HOSTS = os.getenv("DJANGO_ALLOWED_HOSTS").split(',')
+ALLOWED_HOSTS = os.getenv("DJANGO_ALLOWED_HOSTS").split(",")
+
+if 'DJANGO_CSRF_TRUSTED_ORIGINS' in os.environ:
+    CSRF_TRUSTED_ORIGINS = os.getenv("DJANGO_CSRF_TRUSTED_ORIGINS").split(",")
 
 # Application definition
 
@@ -42,7 +45,8 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "whitenoise.runserver_nostatic",
     "django.contrib.staticfiles",
-]
+] + (os.getenv("DJANGO_DEV_APPS").split(",") if "DJANGO_DEV_APPS" in os.environ else [])
+print(INSTALLED_APPS)
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
