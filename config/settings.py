@@ -46,7 +46,6 @@ INSTALLED_APPS = [
     "whitenoise.runserver_nostatic",
     "django.contrib.staticfiles",
 ] + (os.getenv("DJANGO_DEV_APPS").split(",") if "DJANGO_DEV_APPS" in os.environ else [])
-print(INSTALLED_APPS)
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",

@@ -11,5 +11,5 @@ python3 manage.py migrate --noinput
 echo "Collecting static files..."
 python3 manage.py collectstatic --noinput
 
-echo "Creating super user..."
-python3 manage.py createsuperuser --noinput
+echo "Ensuring superuser..."
+python3 manage.py shell -v 0 < ensure_superuser.py
