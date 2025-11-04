@@ -69,7 +69,7 @@ def pretty_numbered_text(numbered_objs):
 @admin.register(Entry)
 class EntryAdmin(admin.ModelAdmin):
     list_display = [
-        "term",
+        "entry",
         "term_definitions",
         "cotexts",
         "concept_anl",
@@ -83,6 +83,7 @@ class EntryAdmin(admin.ModelAdmin):
         "created_at",
         "updated_at",
     ]
+    readonly_fields = ["homonym_number"]
     list_filter = [
         "term",
         "general_char",
@@ -106,6 +107,10 @@ class EntryAdmin(admin.ModelAdmin):
     ]
     filter_vertical = ["term_def", "cotext", "specific_char"]
 
+    @admin.display(description="Entry")
+    def entry(self, obj):
+        return obj
+    
     @admin.display(description="Term Definitions")
     def term_definitions(self, obj):
         numbered_defs = [

@@ -1,4 +1,7 @@
 from django.db import models
+from django.db.models import Max
+from django.db.models.signals import post_delete
+from django.dispatch import receiver
 
 
 class Author(models.Model):
@@ -202,6 +205,11 @@ class Entry(models.Model):
     term = models.ForeignKey(
         Term, verbose_name="Term", on_delete=models.CASCADE, related_name="entries"
     )
+    homonym_number = models.PositiveSmallIntegerField(
+        "Homonym number",
+        default=1,
+        help_text="Used to distinguish homonymous entries of the same term (e.g., ¹, ², ³).",
+    )
     term_def = models.ManyToManyField(
         Definition, verbose_name="Term definition", related_name="entries"
     )
@@ -244,10 +252,54 @@ class Entry(models.Model):
     created_at = models.DateTimeField(verbose_name="Created at", auto_now_add=True)
     updated_at = models.DateTimeField(verbose_name="Updated at", auto_now=True)
 
-    def __str__(self):
-        return f"{self.term} (Entry {self.id})"
-
     class Meta:
         verbose_name = "Entry"
         verbose_name_plural = "Entries"
         ordering = ["-updated_at"]
+        unique_together = ("term", "homonym_number")
+
+    def __str__(self):
+        return f"{self.term}{self.homonym_suffix}"
+
+    @property
+    def has_homonyms(self):
+        return Entry.objects.filter(term=self.term).count() > 1
+
+    @property
+    def homonym_suffix(self):
+        """Return the superscript number for display."""
+        superscripts = "⁰¹²³⁴⁵⁶⁷⁸⁹"
+        if not self.has_homonyms and self.homonym_number <= 1:
+            return ""
+        number_str = "".join(superscripts[int(d)] for d in str(self.homonym_number))
+        return number_str
+
+    def save(self, *args, **kwargs):
+        """
+        Automatically assign the next available homonym number
+        if this is a new entry for an existing term.
+        """
+        if not self.pk and self.term:  # Only on creation
+            last_number = Entry.objects.filter(term=self.term).aggregate(
+                Max("homonym_number")
+            )["homonym_number__max"]
+            if last_number:
+                self.homonym_number = last_number + 1
+            else:
+                self.homonym_number = 1
+        super().save(*args, **kwargs)
+
+
+# 🔁 SIGNAL: Reorder homonym numbers after deletion
+@receiver(post_delete, sender=Entry)
+def reorder_homonym_numbers(sender, instance, **kwargs):
+    """
+    After an entry is deleted, renumber remaining entries of the same term
+    so that homonym_number stays sequential (1, 2, 3...).
+    """
+    siblings = Entry.objects.filter(term=instance.term).order_by("homonym_number", "id")
+
+    for i, entry in enumerate(siblings, start=1):
+        if entry.homonym_number != i:
+            entry.homonym_number = i
+            entry.save(update_fields=["homonym_number"])
