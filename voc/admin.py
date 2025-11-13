@@ -132,8 +132,9 @@ class EntryAdmin(admin.ModelAdmin):
     readonly_fields = ["view_on_site", "homonym_number"]
 
     list_filter = [
-        "general_char",
         "trad_term",
+        "general_char",
+        "specific_char",
         "trad_relation",
         "term_gramm_class",
     ]
