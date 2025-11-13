@@ -92,8 +92,8 @@ class EntryRelationsInline(admin.TabularInline):
 class EntryAdmin(admin.ModelAdmin):
     list_display = [
         "id",
-        "view_on_site",
         "entry",
+        "view_on_site",
         "term_definitions",
         "cotext_short",
         "cotext__text_date",
@@ -108,12 +108,30 @@ class EntryAdmin(admin.ModelAdmin):
         "created_at",
         "updated_at",
     ]
+
     list_display_links = ["id", "entry"]
 
     inlines = [
         EntryRelationsInline,
     ]
-    readonly_fields = ["homonym_number"]
+
+    fields = [
+        "view_on_site",
+        "term",
+        "term_def",
+        "cotext",
+        "concept_anl",
+        "general_char",
+        "specific_char",
+        "trad_term",
+        "trad_relation",
+        "term_gramm_class",
+        "note",
+        "slug",
+        "homonym_number",
+    ]
+    readonly_fields = ["view_on_site", "homonym_number"]
+
     list_filter = [
         "general_char",
         "trad_term",
@@ -141,7 +159,9 @@ class EntryAdmin(admin.ModelAdmin):
     def cotext_short(self, obj):
         cotext = obj.cotext
         short_text = cotext.short_text(limit=50) if cotext else "No Cotext"
-        return format_html(f"<a target='_blank' href='/admin/voc/cotext/{cotext.id}/change/?_to_field=id&_popup=1'>{short_text}</a>")
+        return format_html(
+            f"<a target='_blank' href='/admin/voc/cotext/{cotext.id}/change/?_to_field=id&_popup=1'>{short_text}</a>"
+        )
 
     @admin.display(description="Entry", ordering="term")
     def entry(self, obj):
@@ -167,7 +187,7 @@ class EntryAdmin(admin.ModelAdmin):
         if obj.trad_term:
             return obj.trad_term.definition
         return None
-    
+
     @admin.display(description="View On Site")
     def view_on_site(self, obj):
         return format_html(f"<a target='_blank' href={obj.get_absolute_url()}>View</a>")
