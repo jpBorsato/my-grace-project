@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}voclit{% endblock %}
+{% block content %}
+{% if user.is_staff %}
+<div class="nav d-flex justify-content-end">
+    <a class="nav-link text-end" href="{% url 'admin:voc_entry_change' entry.pk %}">edit</a>
+</div>
+{% endif %}
+<div>
+      <p>
+        <p>
+          <span><strong>{{ entry }}</strong>{{". "}}</span> 
+          <span><a href="{% url 'entry-list' %}{% querystring author=entry.authors_slugs %}">{{ entry.cotext.reference.formatted_authors }}</a>{{"."}}</span>
+          {{ entry.cotext.text_date|date:entry.cotext.template_date_format|default:"n.d" }}.
+          {{ entry.term_gramm_class|capfirst }}.
+          {% if entry.term.phonetic_transcription %}{{ entry.term.phonetic_transcription }}{{"."}}{% endif %}
+          {% if entry.definitions|length <= 1 %}
+              {{ entry.definitions.first }}
+          {% else %}
+            {% for def in entry.definitions %}
+                <strong>{{ forloop.counter }}{{". "}}</strong>
+                {{ def }}
+            {% endfor %}
+          {% endif %}
+              <strong>Category: </strong>
+              <a href="{% url 'entry-list' %}{% querystring category=entry.trad_term.slug %}">{{entry.trad_term|capfirst}}</a>.
+              <strong>Cotext:</strong>
+                {{ entry.cotext.text }}.
+                <strong>Reference:</strong>
+                {{ entry.cotext.reference.citation }} {{ entry.cotext.loc_in_ref }}.
+            {% if entry.note %}
+                <strong>Note:</strong>
+                {{ entry.note }}
+            {% endif %}
+            </p>
+            <p>
+            {% if related_entries  %}
+              See also:<br>
+              {% regroup related_entries by type as type_list %}
+              {% for type in type_list %}
+                <strong>{{type.grouper|capfirst}}{{type.list|pluralize}}: </strong>
+                {% regroup type.list|dictsort:"author.name" by author as author_list %}
+                {% for author in author_list %}
+                  {% for entry in author.list %}
+                    {% include "voc/entry_with_tooltip.html" with entry=entry.entry placement="top" %}{% if forloop.last is not True%},{% endif %}
+                  {% endfor %}
+                  <span>{{" by "}}<a href="{% url 'entry-list' %}{% querystring author=author.grouper.slugs %}">{{author.grouper.name}}</a>{% if forloop.last %}{{". "}}{% else %}{{"; "}}{% endif %}</span>
+                {% endfor %}
+              {% endfor %}
+            {% endif %}
+            </p>
+        </p>
+  </div>
+  {% endblock %}

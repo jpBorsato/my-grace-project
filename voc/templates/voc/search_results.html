@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container mt-4">
+  <h3>Results for “{{ query }}”</h3>
+
+  {% if results.entries or results.authors or results.categories %}
+    {% if results.entries %}
+      <h5 class="mt-3">Entries</h5>
+      <ul class="mb-3">
+        {% for entry in results.entries %}
+          <li>
+            <a href="{% url 'entry-detail-slug' entry.slug %}">{{ entry }}</a>
+          </li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+
+    {% if results.authors %}
+      <h5 class="mt-3">Authors</h5>
+      <ul class="mb-3">
+        {% for author in results.authors %}
+          <li>
+            <a href="{% url 'entry-list' %}{% querystring author=author.slug %}">{{ author }}</a>
+          </li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+
+    {% if results.categories %}
+      <h5 class="mt-3">Categories</h5>
+      <ul class="mb-3">
+        {% for c in results.categories %}
+          <li>
+            <a href="{% url 'entry-list' %}{% querystring q=None category=c.slug %}">{{ c|capfirst }}</a>
+          </li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+  {% else %}
+    <p class="text-muted">No results found.</p>
+  {% endif %}
+</div>
+{% endblock %}

@@ -2,6 +2,7 @@ from django.db import models
 from django.db.models import Max
 from django.db.models.signals import post_delete
 from django.dispatch import receiver
+from django.utils.text import slugify
 
 
 class Author(models.Model):
@@ -14,6 +15,14 @@ class Author(models.Model):
         max_length=255,
         help_text="Used when author name does not fit standard first/last pattern (e.g. Michel de Montaigne).",
         blank=True,
+    )
+    slug = models.SlugField(
+        "Slug",
+        unique=True,
+        blank=True,
+        null=True,
+        max_length=255,
+        help_text="Auto-generated from name if not provided.",
     )
 
     def __str__(self):
@@ -29,6 +38,15 @@ class Author(models.Model):
         verbose_name = "Author"
         verbose_name_plural = "Authors"
         ordering = ["last_name", "first_name"]
+
+    def save(self, *args, **kwargs):
+        """
+        Automatically:
+        - Generate a unique slug from name.
+        """
+        if not self.slug:
+            self.slug = slugify(self)
+        super().save(*args, **kwargs)
 
 
 class Reference(models.Model):
@@ -84,6 +102,16 @@ class Reference(models.Model):
 class Cotext(models.Model):
     text = models.TextField("Cotext")
     text_date = models.DateField("Cotext date", null=True, blank=True)
+    date_granularity = models.SmallIntegerField(
+        "Cotext date granularity",
+        choices=[
+            (0, "No date"),
+            (1, "Year"),
+            (2, "Year and month"),
+            (3, "Full date"),
+        ],
+        default=3,
+    )
     reference = models.ForeignKey(
         Reference,
         on_delete=models.SET_NULL,
@@ -100,26 +128,42 @@ class Cotext(models.Model):
     )
 
     def __str__(self):
-        loc_str = f" {self.loc_in_ref}." if self.loc_in_ref else ""
-        ref_str = f" ({self.reference}.{loc_str})" if self.reference else ""
-        return self.text + ref_str
+        return self.short_text(30)
 
     class Meta:
         verbose_name = "Cotext"
         verbose_name_plural = "Cotexts"
 
-    @property
-    def short_text(self):
-        end = max(self.text.find(" ", 100), 100)
+    def short_text(self, limit=100):
+        end = max(self.text.find(" ", limit), limit)
         ret_str = "..." if end < (len(self.text) - 3) else ""
         loc_str = f" {self.loc_in_ref}." if self.loc_in_ref else ""
         ref_str = f" [{self.reference}.{loc_str}]" if self.reference else ""
-        return self.text[:end] + ret_str + ref_str
+        return self.text[:end] + ret_str + ref_str + f" [{self.id}]"
+
+    @property
+    def full_description(self):
+        loc_str = f" {self.loc_in_ref}." if self.loc_in_ref else ""
+        ref_str = f" ({self.reference}.{loc_str})" if self.reference else ""
+        return self.text + ref_str
+
+    @property
+    def template_date_format(self):
+        formats = {0: None, 1: "Y", 2: "M, Y", 3: "M j, Y"}
+        return formats[self.date_granularity]
 
 
 class TradTerm(models.Model):
     text = models.CharField("Traditional term", max_length=255)
     definition = models.TextField("Traditional term definition")
+    slug = models.SlugField(
+        "Slug",
+        unique=True,
+        blank=True,
+        null=True,
+        max_length=255,
+        help_text="Auto-generated from text if not provided.",
+    )
 
     def __str__(self):
         return self.text
@@ -128,6 +172,15 @@ class TradTerm(models.Model):
         verbose_name = "Traditional Term"
         verbose_name_plural = "Traditional Terms"
         ordering = ["text"]
+
+    def save(self, *args, **kwargs):
+        """
+        Automatically:
+        - Generate a unique slug from text.
+        """
+        if not self.slug:
+            self.slug = slugify(self.text)
+        super().save(*args, **kwargs)
 
 
 class GeneralChar(models.Model):
@@ -144,6 +197,9 @@ class GeneralChar(models.Model):
 
 class Term(models.Model):
     text = models.TextField("Term")
+    phonetic_transcription = models.CharField(
+        "Phonetic transcription", max_length=100, null=True, blank=True
+    )
 
     def __str__(self):
         return self.text or f"Entry {self.id}"
@@ -201,6 +257,35 @@ class GrammClass(models.Model):
         ordering = ["text"]
 
 
+class EntryRelations(models.Model):
+    entry = models.ForeignKey(
+        "Entry",
+        verbose_name="Entry",
+        on_delete=models.CASCADE,
+        related_name="relations_as_source",
+    )
+    type = models.CharField(
+        "Relation type",
+        max_length=50,
+        choices=[
+            ("SYNONYM", "Synonym"),
+            ("ANTONYM", "Antonym"),
+        ],
+    )
+    related_entry = models.ForeignKey(
+        "Entry",
+        verbose_name="Related Entry",
+        on_delete=models.CASCADE,
+        related_name="relations_as_target",
+    )
+
+    class Meta:
+        verbose_name = "Entry Relations"
+        verbose_name_plural = verbose_name
+        ordering = ["entry", "type", "related_entry"]
+        unique_together = ("entry", "type", "related_entry")
+
+
 class Entry(models.Model):
     term = models.ForeignKey(
         Term, verbose_name="Term", on_delete=models.CASCADE, related_name="entries"
@@ -210,11 +295,24 @@ class Entry(models.Model):
         default=1,
         help_text="Used to distinguish homonymous entries of the same term (e.g., ¹, ², ³).",
     )
+    related_entries = models.ManyToManyField(
+        "self",
+        verbose_name="Related entries",
+        symmetrical=True,
+        through=EntryRelations,
+        through_fields=("entry", "related_entry"),
+        blank=True,
+    )
     term_def = models.ManyToManyField(
         Definition, verbose_name="Term definition", related_name="entries"
     )
-    cotext = models.ManyToManyField(
-        Cotext, verbose_name="Cotext", related_name="entries"
+    cotext = models.ForeignKey(
+        Cotext,
+        on_delete=models.SET_NULL,
+        verbose_name="Cotext",
+        related_name="entries",
+        null=True,
+        blank=True,
     )
     concept_anl = models.TextField("Conceptual analysis")
     general_char = models.ForeignKey(
@@ -251,19 +349,50 @@ class Entry(models.Model):
     note = models.TextField("Note", null=True, blank=True)
     created_at = models.DateTimeField(verbose_name="Created at", auto_now_add=True)
     updated_at = models.DateTimeField(verbose_name="Updated at", auto_now=True)
+    slug = models.SlugField(
+        "Slug",
+        unique=True,
+        blank=True,
+        null=True,
+        max_length=255,
+        help_text="Auto-generated from term text and homonym number if not provided.",
+    )
 
     class Meta:
         verbose_name = "Entry"
         verbose_name_plural = "Entries"
-        ordering = ["-updated_at"]
+        ordering = ["id"]
         unique_together = ("term", "homonym_number")
 
     def __str__(self):
         return f"{self.term}{self.homonym_suffix}"
 
+    def authors_slugs(self):
+        return [author.slug for author in self.cotext.reference.authors.all()]
+
+    @property
+    def has_antonyms(self):
+        return self.relations_as_source.filter(type="ANTONYM").exists()
+
+    def antonyms(self):
+        return [
+            relation.related_entry
+            for relation in self.relations_as_source.filter(type="ANTONYM")
+        ]
+
     @property
     def has_homonyms(self):
         return Entry.objects.filter(term=self.term).count() > 1
+
+    @property
+    def has_synonyms(self):
+        return self.relations_as_source.filter(type="SYNONYM").exists()
+
+    def synonyms(self):
+        return [
+            relation.related_entry
+            for relation in self.relations_as_source.filter(type="SYNONYM")
+        ]
 
     @property
     def homonym_suffix(self):
@@ -274,19 +403,49 @@ class Entry(models.Model):
         number_str = "".join(superscripts[int(d)] for d in str(self.homonym_number))
         return number_str
 
+    def homonyms(self):
+        return (
+            Entry.objects.filter(term=self.term)
+            .exclude(homonym_number=self.homonym_number)
+            .order_by("homonym_number")
+        )
+
+    def definitions(self):
+        return self.term_def.all()
+
+    def definitions_textblock(self):
+        defs = self.definitions()
+        if defs.count() > 1:
+            return " ".join([f"{n}. {d}" for n, d in enumerate(defs, 1)])
+        return defs.first()
+
     def save(self, *args, **kwargs):
         """
-        Automatically assign the next available homonym number
-        if this is a new entry for an existing term.
+        Automatically:
+        - Assign next homonym number if needed.
+        - Generate a unique slug from term text and homonym number.
         """
-        if not self.pk and self.term:  # Only on creation
+        creating = not self.pk
+        # 1️⃣ Assign homonym number if this is a new entry
+        if creating and self.term:
             last_number = Entry.objects.filter(term=self.term).aggregate(
                 Max("homonym_number")
             )["homonym_number__max"]
-            if last_number:
-                self.homonym_number = last_number + 1
-            else:
-                self.homonym_number = 1
+            self.homonym_number = (last_number or 0) + 1
+
+        # 2️⃣ Generate slug
+        if not self.slug:
+            base_slug = slugify(self.term.text)
+
+            # ensure uniqueness (in case of manual edits)
+            unique_slug = base_slug
+            counter = 1
+            while Entry.objects.filter(slug=unique_slug).exclude(pk=self.pk).exists():
+                counter += 1
+                unique_slug = f"{base_slug}-{counter}"
+
+            self.slug = unique_slug
+
         super().save(*args, **kwargs)
 
 
@@ -294,8 +453,7 @@ class Entry(models.Model):
 @receiver(post_delete, sender=Entry)
 def reorder_homonym_numbers(sender, instance, **kwargs):
     """
-    After an entry is deleted, renumber remaining entries of the same term
-    so that homonym_number stays sequential (1, 2, 3...).
+    After an entry is deleted, renumber remaining entries of the same term.
     """
     siblings = Entry.objects.filter(term=instance.term).order_by("homonym_number", "id")
 

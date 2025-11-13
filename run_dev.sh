@@ -1,5 +1,13 @@
 #!/usr/bin/env bash
 
+# set -e  # stop if any command fails
+
+# Optional argument handling
+if [[ "$1" == "--down" || "$1" == "--reset" ]]; then
+  echo "Stopping and removing existing containers..."
+  docker compose -f compose.yaml down -v
+fi
+
 echo "Starting database..."
 docker compose -f compose.yaml up -d
 sleep 3
@@ -10,6 +18,7 @@ python3 manage.py migrate --noinput
 
 echo "Installing fixtures..."
 python3 manage.py loaddata */fixtures/*.json
+python3 manage.py save_fixtures
 
 echo "Collecting static files..."
 python3 manage.py collectstatic --noinput

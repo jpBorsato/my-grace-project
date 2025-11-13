@@ -5,14 +5,14 @@ from .models import *
 
 @admin.register(Cotext)
 class CotextAdmin(admin.ModelAdmin):
-    list_display = ("short_text", "text_date", "reference")
-    search_fields = ("text", "reference__title", "reference__authors__last_name")
+    list_display = ("id", "short_text", "text_date", "date_granularity", "reference")
+    search_fields = ("id", "text", "reference__title", "reference__authors__last_name")
     list_filter = ("text_date",)
     autocomplete_fields = ["reference"]
 
     @admin.display(description="Cotext")
     def short_text(self, obj):
-        return obj.short_text
+        return obj.short_text(100)
 
 
 @admin.register(Reference)
@@ -33,6 +33,11 @@ class GeneralCharAdmin(admin.ModelAdmin):
 @admin.register(TradTerm)
 class TradTermAdmin(admin.ModelAdmin):
     search_fields = ("text",)
+
+
+@admin.register(Author)
+class AuthorAdmin(admin.ModelAdmin):
+    pass
 
 
 @admin.register(TradRelation)
@@ -66,12 +71,31 @@ def pretty_numbered_text(numbered_objs):
     )
 
 
+@admin.register(EntryRelations)
+class EntryRelationsAdmin(admin.ModelAdmin):
+    # search_fields = ("homonym",)
+    pass
+
+
+class EntryRelationsInline(admin.TabularInline):
+    model = EntryRelations
+    fk_name = "entry"
+    extra = 1
+    fields = (
+        "type",
+        "related_entry",
+    )
+    autocomplete_fields = ("related_entry",)
+
+
 @admin.register(Entry)
 class EntryAdmin(admin.ModelAdmin):
     list_display = [
+        "id",
         "entry",
         "term_definitions",
-        "cotexts",
+        "cotext",
+        "cotext__text_date",
         "concept_anl",
         "general_char",
         "specific_chars",
@@ -83,9 +107,13 @@ class EntryAdmin(admin.ModelAdmin):
         "created_at",
         "updated_at",
     ]
+    list_display_links = ["id", "entry"]
+
+    inlines = [
+        EntryRelationsInline,
+    ]
     readonly_fields = ["homonym_number"]
     list_filter = [
-        "term",
         "general_char",
         "trad_term",
         "trad_relation",
@@ -105,12 +133,16 @@ class EntryAdmin(admin.ModelAdmin):
         "trad_relation",
         "term_gramm_class",
     ]
-    filter_vertical = ["term_def", "cotext", "specific_char"]
+    filter_vertical = ["term_def", "specific_char"]
 
-    @admin.display(description="Entry")
+    @admin.display(description="Cotext")
+    def cotext_short(self, obj):
+        return obj.cotext.short_text(limit=50) if obj.cotext else "No Cotext"
+
+    @admin.display(description="Entry", ordering="term")
     def entry(self, obj):
         return obj
-    
+
     @admin.display(description="Term Definitions")
     def term_definitions(self, obj):
         numbered_defs = [
@@ -118,12 +150,9 @@ class EntryAdmin(admin.ModelAdmin):
         ]
         return pretty_numbered_text(numbered_defs)
 
-    @admin.display(description="Cotexts")
-    def cotexts(self, obj):
-        numbered_cotexts = [
-            (index, obj.short_text) for index, obj in enumerate(obj.cotext.all(), 1)
-        ]
-        return pretty_numbered_text(numbered_cotexts)
+    @admin.display(description="Cotext date")
+    def date(self, obj):
+        return obj.cotext.text_date
 
     @admin.display(description="Specific Characteristics")
     def specific_chars(self, obj):
@@ -135,6 +164,36 @@ class EntryAdmin(admin.ModelAdmin):
             return obj.trad_term.definition
         return None
 
+    def save_model(self, request, obj, form, change):
+        super().save_model(request, obj, form, change)
+        # Logic to create the symmetrical EntryRelations instance
+        for relation in obj.relations_as_source.all():
+            if not EntryRelations.objects.filter(
+                entry=relation.related_entry,
+                related_entry=relation.entry,
+                type=relation.type,
+            ).exists():
+                EntryRelations.objects.create(
+                    entry=relation.related_entry,
+                    related_entry=relation.entry,
+                    type=relation.type,
+                )
 
-admin.site.register(Author)
+    def save_formset(self, request, form, formset, change):
+        super().save_formset(request, form, formset, change)
+        # Logic to create the symmetrical EntryRelations instance for inline formsets
+        for form_instance in formset.save(commit=False):
+            if form_instance.related_entry and form_instance.entry:
+                if not EntryRelations.objects.filter(
+                    entry=form_instance.related_entry,
+                    related_entry=form_instance.entry,
+                    type=form_instance.type,
+                ).exists():
+                    EntryRelations.objects.create(
+                        entry=form_instance.related_entry,
+                        related_entry=form_instance.entry,
+                        type=form_instance.type,
+                    )
+
+
 admin.site.register(SpecificChar)
