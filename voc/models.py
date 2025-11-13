@@ -285,6 +285,9 @@ class EntryRelations(models.Model):
         verbose_name_plural = verbose_name
         ordering = ["entry", "type", "related_entry"]
         unique_together = ("entry", "type", "related_entry")
+    
+    def __str__(self):
+        return f"{self.type.capitalize()}: [{self.entry}] and [{self.related_entry}]"
 
 
 class Entry(models.Model):

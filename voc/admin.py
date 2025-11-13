@@ -73,7 +73,6 @@ def pretty_numbered_text(numbered_objs):
 
 @admin.register(EntryRelations)
 class EntryRelationsAdmin(admin.ModelAdmin):
-    # search_fields = ("homonym",)
     pass
 
 
