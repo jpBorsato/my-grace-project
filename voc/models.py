@@ -2,6 +2,7 @@ from django.db import models
 from django.db.models import Max
 from django.db.models.signals import post_delete
 from django.dispatch import receiver
+from django.urls import reverse
 from django.utils.text import slugify
 
 
@@ -134,12 +135,12 @@ class Cotext(models.Model):
         verbose_name = "Cotext"
         verbose_name_plural = "Cotexts"
 
-    def short_text(self, limit=100):
+    def short_text(self, limit=100, id=True):
         end = max(self.text.find(" ", limit), limit)
         ret_str = "..." if end < (len(self.text) - 3) else ""
         loc_str = f" {self.loc_in_ref}." if self.loc_in_ref else ""
         ref_str = f" [{self.reference}.{loc_str}]" if self.reference else ""
-        return self.text[:end] + ret_str + ref_str + f" [{self.id}]"
+        return self.text[:end] + ret_str + ref_str + (f" [id: {self.id}]" if id else "")
 
     @property
     def full_description(self):
@@ -419,6 +420,9 @@ class Entry(models.Model):
             return " ".join([f"{n}. {d}" for n, d in enumerate(defs, 1)])
         return defs.first()
 
+    def get_absolute_url(self):
+            return reverse('entry-detail-slug', args=[str(self.slug)])
+    
     def save(self, *args, **kwargs):
         """
         Automatically:

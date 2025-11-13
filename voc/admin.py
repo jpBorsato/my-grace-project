@@ -92,9 +92,10 @@ class EntryRelationsInline(admin.TabularInline):
 class EntryAdmin(admin.ModelAdmin):
     list_display = [
         "id",
+        "view_on_site",
         "entry",
         "term_definitions",
-        "cotext",
+        "cotext_short",
         "cotext__text_date",
         "concept_anl",
         "general_char",
@@ -136,9 +137,11 @@ class EntryAdmin(admin.ModelAdmin):
     ]
     filter_vertical = ["term_def", "specific_char"]
 
-    @admin.display(description="Cotext")
+    @admin.display(description="Cotext", ordering="cotext")
     def cotext_short(self, obj):
-        return obj.cotext.short_text(limit=50) if obj.cotext else "No Cotext"
+        cotext = obj.cotext
+        short_text = cotext.short_text(limit=50) if cotext else "No Cotext"
+        return format_html(f"<a target='_blank' href='/admin/voc/cotext/{cotext.id}/change/?_to_field=id&_popup=1'>{short_text}</a>")
 
     @admin.display(description="Entry", ordering="term")
     def entry(self, obj):
@@ -164,6 +167,10 @@ class EntryAdmin(admin.ModelAdmin):
         if obj.trad_term:
             return obj.trad_term.definition
         return None
+    
+    @admin.display(description="View On Site")
+    def view_on_site(self, obj):
+        return format_html(f"<a target='_blank' href={obj.get_absolute_url()}>View</a>")
 
     def save_model(self, request, obj, form, change):
         super().save_model(request, obj, form, change)
