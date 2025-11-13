@@ -128,6 +128,7 @@ class EntryAdmin(admin.ModelAdmin):
     )
     autocomplete_fields = [
         "term",
+        "cotext",
         "general_char",
         "trad_term",
         "trad_relation",
