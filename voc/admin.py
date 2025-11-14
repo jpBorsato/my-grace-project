@@ -160,9 +160,10 @@ class EntryAdmin(admin.ModelAdmin):
     @admin.display(description="Cotext", ordering="cotext")
     def edit_cotext(self, obj):
         cotext = obj.cotext
-        short_text = cotext.short_text(limit=50) if cotext else "No Cotext"
+        full_text = cotext.display_text(full=True, id=False) if cotext else "No Cotext"
+        short_text = cotext.display_text(max_length=50) if cotext else "No Cotext"
         return format_html(
-            f"<a target='_blank' href='/admin/voc/cotext/{cotext.id}/change/?_to_field=id&_popup=1'>{short_text}</a>"
+            f"<span title='{full_text}'><a target='_blank' href='/admin/voc/cotext/{cotext.id}/change/?_to_field=id&_popup=1'>{short_text}</a></span>"
         )
 
     @admin.display(description="Term", ordering="term")

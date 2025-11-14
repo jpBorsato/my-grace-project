@@ -129,17 +129,17 @@ class Cotext(models.Model):
     )
 
     def __str__(self):
-        return self.short_text(30)
+        return self.display_text(30)
 
     class Meta:
         verbose_name = "Cotext"
         verbose_name_plural = "Cotexts"
 
-    def short_text(self, limit=100, id=True):
-        end = max(self.text.find(" ", limit), limit)
+    def display_text(self, max_length=100, full=False, id=True):
+        end = max(self.text.find(" ", max_length), max_length) if not full else len(self.text)
         ret_str = "..." if end < (len(self.text) - 3) else ""
         loc_str = f" {self.loc_in_ref}." if self.loc_in_ref else ""
-        ref_str = f" [{self.reference}.{loc_str}]" if self.reference else ""
+        ref_str = f" ({self.reference}.{loc_str})" if self.reference else ""
         return self.text[:end] + ret_str + ref_str + (f" [id: {self.id}]" if id else "")
 
     @property
