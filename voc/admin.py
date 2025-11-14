@@ -91,10 +91,12 @@ class EntryRelationsInline(admin.TabularInline):
 class EntryAdmin(admin.ModelAdmin):
     list_display = [
         "id",
-        "entry",
+        "edit",
         "view_on_site",
+        "edit_term",
+        "phonetic_transcription",
         "term_definitions",
-        "cotext_short",
+        "edit_cotext",
         "cotext__text_date",
         "concept_anl",
         "general_char",
@@ -108,7 +110,7 @@ class EntryAdmin(admin.ModelAdmin):
         "updated_at",
     ]
 
-    list_display_links = ["id", "entry"]
+    list_display_links = ["edit"]
 
     inlines = [
         EntryRelationsInline,
@@ -156,17 +158,23 @@ class EntryAdmin(admin.ModelAdmin):
     filter_vertical = ["term_def", "specific_char"]
 
     @admin.display(description="Cotext", ordering="cotext")
-    def cotext_short(self, obj):
+    def edit_cotext(self, obj):
         cotext = obj.cotext
         short_text = cotext.short_text(limit=50) if cotext else "No Cotext"
         return format_html(
             f"<a target='_blank' href='/admin/voc/cotext/{cotext.id}/change/?_to_field=id&_popup=1'>{short_text}</a>"
         )
 
-    @admin.display(description="Entry", ordering="term")
-    def entry(self, obj):
-        return obj
+    @admin.display(description="Term", ordering="term")
+    def edit_term(self, obj):
+        return format_html(
+            f"<a target='_blank' href='/admin/voc/term/{obj.term.id}/change/?_to_field=id&_popup=1'>{obj}</a>"
+        )
 
+    @admin.display(description="Phonetic Transcription", ordering="term")
+    def phonetic_transcription(self, obj):
+        return obj.term.phonetic_transcription
+    
     @admin.display(description="Term Definitions")
     def term_definitions(self, obj):
         numbered_defs = [
@@ -191,6 +199,10 @@ class EntryAdmin(admin.ModelAdmin):
     @admin.display(description="View On Site")
     def view_on_site(self, obj):
         return format_html(f"<a target='_blank' href={obj.get_absolute_url()}>View</a>")
+    
+    @admin.display(description="Edit")
+    def edit(self, obj):
+        return "Edit"
 
     def save_model(self, request, obj, form, change):
         super().save_model(request, obj, form, change)
