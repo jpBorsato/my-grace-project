@@ -20,7 +20,7 @@
       <ul class="mb-3">
         {% for author in results.authors %}
           <li>
-            <a href="{% url 'entry-list' %}{% querystring author=author.slug %}">{{ author }}</a>
+            <a href="{% url 'author-entry-list' author_slug=author.slug %}">{{ author }}</a>
           </li>
         {% endfor %}
       </ul>
@@ -29,9 +29,9 @@
     {% if results.categories %}
       <h5 class="mt-3">Categories</h5>
       <ul class="mb-3">
-        {% for c in results.categories %}
+        {% for category in results.categories %}
           <li>
-            <a href="{% url 'entry-list' %}{% querystring q=None category=c.slug %}">{{ c|capfirst }}</a>
+            <a href="{% url 'category-entry-list' category_slug=category.slug %}">{{ category|capfirst }}</a>
           </li>
         {% endfor %}
       </ul>
