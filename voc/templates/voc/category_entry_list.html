@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container mt-4">
+  <h4>Entries by {{category|capfirst}}:</h4>
+    <ul class="mb-3">
+    {% for entry in entry_list %}
+        <li><h6 class="mt-2">{% include "voc/entry_with_tooltip.html" with placement="right" %}</h6></li>
+    {% endfor %}
+    </ul>
+</div>
+{% if page_obj.paginator.num_pages > 1 %}
+{% include "partials/paginator.html" %}
+{% endif %}
+{% endblock %}

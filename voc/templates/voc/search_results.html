@@ -9,7 +9,7 @@
       <ul class="mb-3">
         {% for entry in results.entries %}
           <li>
-            <a href="{% url 'entry-detail-slug' entry.slug %}">{{ entry }}</a>
+            <a href="{% url 'entry-detail' entry.slug %}">{{ entry }}</a>
           </li>
         {% endfor %}
       </ul>

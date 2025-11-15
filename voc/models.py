@@ -136,7 +136,11 @@ class Cotext(models.Model):
         verbose_name_plural = "Cotexts"
 
     def display_text(self, max_length=100, full=False, id=True):
-        end = max(self.text.find(" ", max_length), max_length) if not full else len(self.text)
+        end = (
+            max(self.text.find(" ", max_length), max_length)
+            if not full
+            else len(self.text)
+        )
         ret_str = "..." if end < (len(self.text) - 3) else ""
         loc_str = f" {self.loc_in_ref}." if self.loc_in_ref else ""
         ref_str = f" ({self.reference}.{loc_str})" if self.reference else ""
@@ -285,7 +289,7 @@ class EntryRelations(models.Model):
         verbose_name_plural = verbose_name
         ordering = ["entry", "type", "related_entry"]
         unique_together = ("entry", "type", "related_entry")
-    
+
     def __str__(self):
         return f"{self.type.capitalize()}: [{self.entry}] and [{self.related_entry}]"
 
@@ -424,8 +428,8 @@ class Entry(models.Model):
         return defs.first()
 
     def get_absolute_url(self):
-            return reverse('entry-detail-slug', args=[str(self.slug)])
-    
+        return reverse("entry-detail", args=[str(self.slug)])
+
     def save(self, *args, **kwargs):
         """
         Automatically:

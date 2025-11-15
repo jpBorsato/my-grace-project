@@ -1,6 +1,6 @@
 import os
 from django.http import JsonResponse
-from django.shortcuts import render, redirect, get_list_or_404
+from django.shortcuts import render, redirect, get_object_or_404, get_list_or_404
 from django.db import connection
 from django.db.models import F
 from django.db.models.functions import Lower
@@ -20,7 +20,7 @@ def query(query_object):
 
 
 def index(request):
-    return redirect("entry-list")
+    return redirect("author-list")
 
 
 def status(request):
@@ -76,7 +76,8 @@ class EntryListView(ListView):
             queryset = queryset.filter(cotext__reference__authors__in=author)
 
         if trad_term_filter:
-            queryset = queryset.filter(trad_term__slug=trad_term_filter)
+            trad_term = get_object_or_404(TradTerm, slug=trad_term_filter)
+            queryset = queryset.filter(trad_term=trad_term)
 
         return queryset
 
@@ -106,6 +107,70 @@ class EntryDetailView(DetailView):
                         "entry": e,
                     }
                 )
+        return context
+
+
+class AuthorListView(ListView):
+    model = Author
+    template_name = "voc/author_list.html"
+    context_object_name = "author_list"
+    paginate_by = 100
+
+
+class AuthorEntryListView(ListView):
+    model = Entry
+    template_name = "voc/author_entry_list.html"
+    context_object_name = "entry_list"
+    paginate_by = 100
+
+    @property
+    def author(self):
+        author_slug = self.kwargs["author_slug"]
+        author = get_object_or_404(Author, slug=author_slug)
+        return author
+
+    def get_queryset(self):
+        queryset = Entry.objects.filter(cotext__reference__authors=self.author)
+        queryset = queryset.annotate(term_lowercase=Lower(F("term__text"))).order_by(
+            "term_lowercase", "homonym_number"
+        )
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["author"] = self.author
+        return context
+
+
+class CategoryListView(ListView):
+    model = TradTerm
+    template_name = "voc/category_list.html"
+    context_object_name = "category_list"
+    paginate_by = 100
+
+
+class CategoryEntryListView(ListView):
+    model = Entry
+    template_name = "voc/category_entry_list.html"
+    context_object_name = "entry_list"
+    paginate_by = 100
+
+    @property
+    def trad_term(self):
+        trad_term_slug = self.kwargs["category_slug"]
+        trad_term = get_object_or_404(TradTerm, slug=trad_term_slug)
+        return trad_term
+
+    def get_queryset(self):
+        queryset = Entry.objects.filter(trad_term=self.trad_term)
+        queryset = queryset.annotate(term_lowercase=Lower(F("term__text"))).order_by(
+            "term_lowercase", "homonym_number"
+        )
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["category"] = self.trad_term
         return context
 
 
@@ -142,7 +207,7 @@ def search(request):
         return JsonResponse(
             {
                 "results": {
-                    "entries": {"list": entries_list, "url": "entry/"},
+                    "entries": {"list": entries_list, "url": "entries/"},
                     "authors": {"list": authors_list, "url": "entries/?author="},
                     "categories": {
                         "list": categories_list,
