@@ -79,7 +79,8 @@ class EntryRelationsAdmin(admin.ModelAdmin):
         "entry",
         "view_entry_on_site",
         "related_entry",
-        "view_rel_entry_on_site"
+        "view_rel_entry_on_site",
+        "has_symmetrical"
     ]
 
     list_display_links = ["edit",]
@@ -87,6 +88,10 @@ class EntryRelationsAdmin(admin.ModelAdmin):
     @admin.display(description="Edit")
     def edit(self, obj):
         return "Edit"
+    
+    @admin.display(description="Has Symmetrical", boolean=True)
+    def has_symmetrical(self, obj):
+        return obj.has_symmetrical
 
     @admin.display(description="View Entry On Site")
     def view_entry_on_site(self, obj):

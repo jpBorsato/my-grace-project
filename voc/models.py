@@ -294,6 +294,10 @@ class EntryRelations(models.Model):
     def __str__(self):
         return f"{self.type.capitalize()}: [{self.entry}] and [{self.related_entry}]"
 
+    @property
+    def has_symmetrical(self):
+        return EntryRelations.objects.filter(entry=self.related_entry, type=self.type, related_entry=self.entry).exists()
+
 
 class EntryQuerySet(models.QuerySet):
     def order_by_abc_lowercase(self, precedent_fields=[], subsequent_fields=[]):
