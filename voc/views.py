@@ -2,8 +2,6 @@ import os
 from django.http import JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404, get_list_or_404
 from django.db import connection
-from django.db.models import F
-from django.db.models.functions import Lower
 from django.views.generic import ListView, DetailView
 from datetime import datetime
 from dotenv import load_dotenv
