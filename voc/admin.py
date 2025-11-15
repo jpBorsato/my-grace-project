@@ -73,7 +73,28 @@ def pretty_numbered_text(numbered_objs):
 
 @admin.register(EntryRelations)
 class EntryRelationsAdmin(admin.ModelAdmin):
-    pass
+    list_display = [
+        "edit",
+        "type",
+        "entry",
+        "view_entry_on_site",
+        "related_entry",
+        "view_rel_entry_on_site"
+    ]
+
+    list_display_links = ["edit",]
+
+    @admin.display(description="Edit")
+    def edit(self, obj):
+        return "Edit"
+
+    @admin.display(description="View Entry On Site")
+    def view_entry_on_site(self, obj):
+        return format_html(f"<a target='_blank' href={obj.entry.get_absolute_url()}>View</a>")
+
+    @admin.display(description="View Rel. Entry On Site")
+    def view_rel_entry_on_site(self, obj):
+        return format_html(f"<a target='_blank' href={obj.related_entry.get_absolute_url()}>View</a>")
 
 
 class EntryRelationsInline(admin.TabularInline):
