@@ -175,7 +175,7 @@ class EntryAdmin(admin.ModelAdmin):
     @admin.display(description="Phonetic Transcription", ordering="term")
     def phonetic_transcription(self, obj):
         return obj.term.phonetic_transcription
-    
+
     @admin.display(description="Term Definitions")
     def term_definitions(self, obj):
         numbered_defs = [
@@ -200,7 +200,7 @@ class EntryAdmin(admin.ModelAdmin):
     @admin.display(description="View On Site")
     def view_on_site(self, obj):
         return format_html(f"<a target='_blank' href={obj.get_absolute_url()}>View</a>")
-    
+
     @admin.display(description="Edit")
     def edit(self, obj):
         return "Edit"

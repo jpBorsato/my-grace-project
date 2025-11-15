@@ -41,6 +41,10 @@
             </li>
             <li class="nav-item">
               <a class="nav-link"
+                 href="{% url 'entry-by-category-list' %}">Entries by Category</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link"
                  href="{% url 'entry-list' %}">Entries</a>
             </li>
             {% if user.is_staff %}

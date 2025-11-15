@@ -62,9 +62,7 @@ class EntryListView(ListView):
     paginate_by = 100
 
     def get_queryset(self):
-        queryset = Entry.objects.annotate(
-            term_lowercase=Lower(F("term__text"))
-        ).order_by("term_lowercase", "homonym_number")
+        queryset = Entry.objects.all().order_by_abc_lowercase()
 
         # Get query string parameters
         author_filter = self.request.GET.getlist("author")
@@ -130,10 +128,9 @@ class AuthorEntryListView(ListView):
         return author
 
     def get_queryset(self):
-        queryset = Entry.objects.filter(cotext__reference__authors=self.author)
-        queryset = queryset.annotate(term_lowercase=Lower(F("term__text"))).order_by(
-            "term_lowercase", "homonym_number"
-        )
+        queryset = Entry.objects.filter(
+            cotext__reference__authors=self.author
+        ).order_by_abc_lowercase()
         return queryset
 
     def get_context_data(self, **kwargs):
@@ -149,6 +146,17 @@ class CategoryListView(ListView):
     paginate_by = 100
 
 
+class EntryByCategoryListView(ListView):
+    model = Entry
+    template_name = "voc/entry_by_category_list.html"
+    context_object_name = "entry_list"
+    paginate_by = 100
+
+    def get_queryset(self):
+        queryset = Entry.objects.all().order_by_abc_lowercase(["trad_term"])
+        return queryset
+
+
 class CategoryEntryListView(ListView):
     model = Entry
     template_name = "voc/category_entry_list.html"
@@ -162,10 +170,9 @@ class CategoryEntryListView(ListView):
         return trad_term
 
     def get_queryset(self):
-        queryset = Entry.objects.filter(trad_term=self.trad_term)
-        queryset = queryset.annotate(term_lowercase=Lower(F("term__text"))).order_by(
-            "term_lowercase", "homonym_number"
-        )
+        queryset = Entry.objects.filter(
+            trad_term=self.trad_term
+        ).order_by_abc_lowercase()
         return queryset
 
     def get_context_data(self, **kwargs):

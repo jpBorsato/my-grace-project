@@ -19,6 +19,11 @@ urlpatterns = [
     # Categories
     path("categories/", views.CategoryListView.as_view(), name="category-list"),
     path(
+        "categories/entries/",
+        views.EntryByCategoryListView.as_view(),
+        name="entry-by-category-list",
+    ),
+    path(
         "categories/<slug:category_slug>/entries/",
         views.CategoryEntryListView.as_view(),
         name="category-entry-list",

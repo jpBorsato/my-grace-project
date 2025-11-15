@@ -1,5 +1,6 @@
 from django.db import models
-from django.db.models import Max
+from django.db.models import F, Max
+from django.db.models.functions import Lower
 from django.db.models.signals import post_delete
 from django.dispatch import receiver
 from django.urls import reverse
@@ -294,6 +295,18 @@ class EntryRelations(models.Model):
         return f"{self.type.capitalize()}: [{self.entry}] and [{self.related_entry}]"
 
 
+class EntryQuerySet(models.QuerySet):
+    def order_by_abc_lowercase(self, precedent_fields=[], subsequent_fields=[]):
+        return self.annotate(term_lowercase=Lower(F("term__text"))).order_by(
+            *precedent_fields, "term_lowercase", "homonym_number", *subsequent_fields
+        )
+
+
+class EntryManager(models.Manager):
+    def get_queryset(self):
+        return EntryQuerySet(self.model, using=self._db)
+
+
 class Entry(models.Model):
     term = models.ForeignKey(
         Term, verbose_name="Term", on_delete=models.CASCADE, related_name="entries"
@@ -365,6 +378,8 @@ class Entry(models.Model):
         max_length=255,
         help_text="Auto-generated from term text and homonym number if not provided.",
     )
+
+    objects = EntryManager()
 
     class Meta:
         verbose_name = "Entry"
