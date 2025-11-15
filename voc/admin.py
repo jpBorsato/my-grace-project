@@ -89,7 +89,7 @@ class EntryRelationsAdmin(admin.ModelAdmin):
     def edit(self, obj):
         return "Edit"
     
-    @admin.display(description="Has Symmetrical", boolean=True)
+    @admin.display(description="Has Symmetrical", boolean=True, ordering="has_symmetrical")
     def has_symmetrical(self, obj):
         return obj.has_symmetrical
 
@@ -101,6 +101,13 @@ class EntryRelationsAdmin(admin.ModelAdmin):
     def view_rel_entry_on_site(self, obj):
         return format_html(f"<a target='_blank' href={obj.related_entry.get_absolute_url()}>View</a>")
 
+    def delete_queryset(self, request, queryset):
+        """
+        Override bulk delete to ensure each instance's delete() is called,
+        triggering symmetrical deletion logic.
+        """
+        for obj in queryset:
+            obj.delete()
 
 class EntryRelationsInline(admin.TabularInline):
     model = EntryRelations
@@ -231,36 +238,6 @@ class EntryAdmin(admin.ModelAdmin):
     def edit(self, obj):
         return "Edit"
 
-    def save_model(self, request, obj, form, change):
-        super().save_model(request, obj, form, change)
-        # Logic to create the symmetrical EntryRelations instance
-        for relation in obj.relations_as_source.all():
-            if not EntryRelations.objects.filter(
-                entry=relation.related_entry,
-                related_entry=relation.entry,
-                type=relation.type,
-            ).exists():
-                EntryRelations.objects.create(
-                    entry=relation.related_entry,
-                    related_entry=relation.entry,
-                    type=relation.type,
-                )
-
-    def save_formset(self, request, form, formset, change):
-        super().save_formset(request, form, formset, change)
-        # Logic to create the symmetrical EntryRelations instance for inline formsets
-        for form_instance in formset.save(commit=False):
-            if form_instance.related_entry and form_instance.entry:
-                if not EntryRelations.objects.filter(
-                    entry=form_instance.related_entry,
-                    related_entry=form_instance.entry,
-                    type=form_instance.type,
-                ).exists():
-                    EntryRelations.objects.create(
-                        entry=form_instance.related_entry,
-                        related_entry=form_instance.entry,
-                        type=form_instance.type,
-                    )
 
 
 admin.site.register(SpecificChar)

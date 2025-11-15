@@ -292,12 +292,42 @@ class EntryRelations(models.Model):
         unique_together = ("entry", "type", "related_entry")
 
     def __str__(self):
-        return f"{self.type.capitalize()}: [{self.entry}] and [{self.related_entry}]"
+        return f"{self.type.capitalize()}: \"{self.entry}\" with \"{self.related_entry}\""
 
     @property
     def has_symmetrical(self):
         return EntryRelations.objects.filter(entry=self.related_entry, type=self.type, related_entry=self.entry).exists()
+    
+    def get_symmetrical(self):
+        if self.has_symmetrical:
+            symmetrical = EntryRelations.objects.get(entry=self.related_entry, type=self.type, related_entry=self.entry)
+            return symmetrical
+        return None
 
+    def save(self, *args, **kwargs):
+        """
+        Save relation and ensure the symmetrical relation also exists.
+        Prevent infinite recursion by tracking creation stage.
+        """
+        creating = self.pk is None
+        super().save(*args, **kwargs)
+
+        if creating and not self.has_symmetrical:
+            # Create the reverse relation
+            EntryRelations.objects.create(
+                entry=self.related_entry,
+                type=self.type,
+                related_entry=self.entry
+            )
+
+    def delete(self, *args, **kwargs):
+        """
+        Delete this relation and also delete the symmetrical one if it exists.
+        """
+        symmetrical = self.get_symmetrical()
+        super().delete(*args, **kwargs)
+        if symmetrical:
+            symmetrical.delete()
 
 class EntryQuerySet(models.QuerySet):
     def order_by_abc_lowercase(self, precedent_fields=[], subsequent_fields=[]):
@@ -323,9 +353,7 @@ class Entry(models.Model):
     related_entries = models.ManyToManyField(
         "self",
         verbose_name="Related entries",
-        symmetrical=True,
         through=EntryRelations,
-        through_fields=("entry", "related_entry"),
         blank=True,
     )
     term_def = models.ManyToManyField(
