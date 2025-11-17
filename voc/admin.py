@@ -3,6 +3,22 @@ from django.utils.html import format_html
 from .models import *
 
 
+def pretty_numbered_text(numbered_objs):
+    n = len(numbered_objs)
+    if n == 0:
+        return ""
+    elif n == 1:
+        return numbered_objs[0][1]
+    return format_html(
+        " ".join(
+            [
+                f'<span style="font-weight: bold;">{index}.\n</span> {obj}'
+                for index, obj in numbered_objs
+            ]
+        )
+    )
+
+
 @admin.register(Cotext)
 class CotextAdmin(admin.ModelAdmin):
     list_display = ("id", "short_text", "text_date", "date_granularity", "reference")
@@ -55,20 +71,46 @@ class DefinitionAdmin(admin.ModelAdmin):
     search_fields = ("text",)
 
 
-def pretty_numbered_text(numbered_objs):
-    n = len(numbered_objs)
-    if n == 0:
-        return ""
-    elif n == 1:
-        return numbered_objs[0][1]
-    return format_html(
-        " ".join(
-            [
-                f'<span style="font-weight: bold;">{index}.\n</span> {obj}'
-                for index, obj in numbered_objs
-            ]
-        )
-    )
+entry_definition_intermediate = Entry.term_def.through
+
+
+def custom_entry_definition_str(self):
+    return ""
+
+
+entry_definition_intermediate.__str__ = custom_entry_definition_str
+
+
+class DefinitionInlineAdmin(admin.TabularInline):
+    model = entry_definition_intermediate
+    autocomplete_fields = ["definition"]
+    verbose_name = "Definition"
+    verbose_name_plural = "Definitions"
+    extra = 1
+
+
+@admin.register(SpecificChar)
+class SpecificCharAdmin(admin.ModelAdmin):
+    search_fields = ("text",)
+
+
+entry_spec_char_intermediate = Entry.specific_char.through
+
+
+def custom_entry_spec_char_str(self):
+    return ""
+
+
+entry_spec_char_intermediate.__str__ = custom_entry_spec_char_str
+entry_spec_char_intermediate._meta.order_by = ["specificchar__text"]
+
+
+class SpecificCharlineAdmin(admin.TabularInline):
+    model = entry_spec_char_intermediate
+    autocomplete_fields = ["specificchar"]
+    verbose_name = "Specific Characteristic"
+    verbose_name_plural = "Specific Characteristics"
+    extra = 1
 
 
 @admin.register(EntryRelations)
@@ -80,26 +122,34 @@ class EntryRelationsAdmin(admin.ModelAdmin):
         "view_entry_on_site",
         "related_entry",
         "view_rel_entry_on_site",
-        "has_symmetrical"
+        "has_symmetrical",
     ]
 
-    list_display_links = ["edit",]
+    list_display_links = [
+        "edit",
+    ]
 
     @admin.display(description="Edit")
     def edit(self, obj):
         return "Edit"
-    
-    @admin.display(description="Has Symmetrical", boolean=True, ordering="has_symmetrical")
+
+    @admin.display(
+        description="Has Symmetrical", boolean=True, ordering="has_symmetrical"
+    )
     def has_symmetrical(self, obj):
         return obj.has_symmetrical
 
     @admin.display(description="View Entry On Site")
     def view_entry_on_site(self, obj):
-        return format_html(f"<a target='_blank' href={obj.entry.get_absolute_url()}>View</a>")
+        return format_html(
+            f"<a target='_blank' href={obj.entry.get_absolute_url()}>View</a>"
+        )
 
     @admin.display(description="View Rel. Entry On Site")
     def view_rel_entry_on_site(self, obj):
-        return format_html(f"<a target='_blank' href={obj.related_entry.get_absolute_url()}>View</a>")
+        return format_html(
+            f"<a target='_blank' href={obj.related_entry.get_absolute_url()}>View</a>"
+        )
 
     def delete_queryset(self, request, queryset):
         """
@@ -109,9 +159,12 @@ class EntryRelationsAdmin(admin.ModelAdmin):
         for obj in queryset:
             obj.delete()
 
+
 class EntryRelationsInline(admin.TabularInline):
     model = EntryRelations
     fk_name = "entry"
+    verbose_name = "Entry Relation"
+    verbose_name_plural = "Entry Relations"
     extra = 1
     fields = (
         "type",
@@ -145,14 +198,12 @@ class EntryAdmin(admin.ModelAdmin):
 
     list_display_links = ["edit"]
 
-    inlines = [
-        EntryRelationsInline,
-    ]
+    inlines = [DefinitionInlineAdmin, SpecificCharlineAdmin, EntryRelationsInline]
 
     fields = [
         "view_on_site",
         "term",
-        "term_def",
+        # "term_def",
         "cotext",
         "concept_anl",
         "general_char",
@@ -182,13 +233,14 @@ class EntryAdmin(admin.ModelAdmin):
     )
     autocomplete_fields = [
         "term",
+        "term_def",
         "cotext",
         "general_char",
         "trad_term",
         "trad_relation",
         "term_gramm_class",
     ]
-    filter_vertical = ["term_def", "specific_char"]
+    # filter_vertical = ["term_def", "specific_char"]
 
     @admin.display(description="Cotext", ordering="cotext")
     def edit_cotext(self, obj):
@@ -237,7 +289,3 @@ class EntryAdmin(admin.ModelAdmin):
     @admin.display(description="Edit")
     def edit(self, obj):
         return "Edit"
-
-
-
-admin.site.register(SpecificChar)
