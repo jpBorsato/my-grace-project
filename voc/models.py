@@ -26,6 +26,7 @@ class Author(models.Model):
         max_length=255,
         help_text="Auto-generated from name if not provided.",
     )
+    description = models.TextField("Description", blank=True, null=True)
 
     def __str__(self):
         if self.full_name:
@@ -506,6 +507,13 @@ class Entry(models.Model):
 
         super().save(*args, **kwargs)
 
+entry_definition_intermediate = Entry.term_def.through
+entry_definition_intermediate.__str__ = lambda obj: ""
+
+entry_specificchar_intermediate = Entry.specific_char.through
+entry_specificchar_intermediate.specificchar.verbose_name = "Specific characteristic"
+entry_specificchar_intermediate.__str__ = lambda obj: ""
+entry_specificchar_intermediate._meta.ordering = ["entry", "specificchar"]
 
 # 🔁 SIGNAL: Reorder homonym numbers after deletion
 @receiver(post_delete, sender=Entry)

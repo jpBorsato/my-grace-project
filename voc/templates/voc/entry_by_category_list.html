@@ -8,7 +8,7 @@
     {% regroup entry_list by trad_term as category_list %}
     {% for category in category_list %}
         <li>
-          <h5 class="mt-2"><a class="link-dark link-opacity-75 link-opacity-100-hover link-underline-opacity-75 link-underline-opacity-100-hover" href="{% url 'category-entry-list' category_slug=category.grouper.slug %}">{{category.grouper|capfirst}}</a></h5>
+          <h5 class="mt-2"><a class="link-dark link-opacity-75 link-opacity-100-hover link-underline-opacity-75 link-underline-opacity-100-hover" data-bs-toggle="tooltip" data-bs-placement="right" title="{{ category.grouper.definition|capfirst }}" href="{% url 'category-entry-list' category_slug=category.grouper.slug %}">{{category.grouper|capfirst}}</a></h5>
             <ul>
               {% for entry in category.list %}
                 <li><h6 class="mt-2">{% include "voc/entry_with_tooltip.html" with placement="right" %}</h6></li>

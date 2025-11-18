@@ -70,48 +70,33 @@ class GrammClassAdmin(admin.ModelAdmin):
 class DefinitionAdmin(admin.ModelAdmin):
     search_fields = ("text",)
 
-
 entry_definition_intermediate = Entry.term_def.through
-
-
-def custom_entry_definition_str(self):
-    return ""
-
-
-entry_definition_intermediate.__str__ = custom_entry_definition_str
-
 
 class DefinitionInlineAdmin(admin.TabularInline):
     model = entry_definition_intermediate
     autocomplete_fields = ["definition"]
     verbose_name = "Definition"
     verbose_name_plural = "Definitions"
-    extra = 1
+    extra = 0
 
 
 @admin.register(SpecificChar)
 class SpecificCharAdmin(admin.ModelAdmin):
+    fields = ["text",]
     search_fields = ("text",)
 
-
 entry_spec_char_intermediate = Entry.specific_char.through
-
-
-def custom_entry_spec_char_str(self):
-    return ""
-
-
-entry_spec_char_intermediate.__str__ = custom_entry_spec_char_str
-entry_spec_char_intermediate._meta.order_by = ["specificchar__text"]
-
 
 class SpecificCharlineAdmin(admin.TabularInline):
     model = entry_spec_char_intermediate
     autocomplete_fields = ["specificchar"]
     verbose_name = "Specific Characteristic"
     verbose_name_plural = "Specific Characteristics"
-    extra = 1
+    extra = 0
 
+    @admin.display(description="Specific Characteristic")
+    def specific_char(self, obj):
+        return obj.specificchar.text
 
 @admin.register(EntryRelations)
 class EntryRelationsAdmin(admin.ModelAdmin):
@@ -165,7 +150,7 @@ class EntryRelationsInline(admin.TabularInline):
     fk_name = "entry"
     verbose_name = "Entry Relation"
     verbose_name_plural = "Entry Relations"
-    extra = 1
+    extra = 0
     fields = (
         "type",
         "related_entry",
@@ -178,7 +163,7 @@ class EntryAdmin(admin.ModelAdmin):
     list_display = [
         "id",
         "edit",
-        "view_on_site",
+        "view",
         "edit_term",
         "phonetic_transcription",
         "term_definitions",
@@ -201,13 +186,10 @@ class EntryAdmin(admin.ModelAdmin):
     inlines = [DefinitionInlineAdmin, SpecificCharlineAdmin, EntryRelationsInline]
 
     fields = [
-        "view_on_site",
         "term",
-        # "term_def",
         "cotext",
         "concept_anl",
         "general_char",
-        "specific_char",
         "trad_term",
         "trad_relation",
         "term_gramm_class",
@@ -215,7 +197,7 @@ class EntryAdmin(admin.ModelAdmin):
         "slug",
         "homonym_number",
     ]
-    readonly_fields = ["view_on_site", "homonym_number"]
+    readonly_fields = ["homonym_number",]
 
     list_filter = [
         "trad_term",
@@ -240,7 +222,6 @@ class EntryAdmin(admin.ModelAdmin):
         "trad_relation",
         "term_gramm_class",
     ]
-    # filter_vertical = ["term_def", "specific_char"]
 
     @admin.display(description="Cotext", ordering="cotext")
     def edit_cotext(self, obj):
@@ -283,7 +264,7 @@ class EntryAdmin(admin.ModelAdmin):
         return None
 
     @admin.display(description="View On Site")
-    def view_on_site(self, obj):
+    def view(self, obj):
         return format_html(f"<a target='_blank' href={obj.get_absolute_url()}>View</a>")
 
     @admin.display(description="Edit")
