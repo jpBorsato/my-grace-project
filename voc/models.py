@@ -18,6 +18,7 @@ class Author(models.Model):
         help_text="Used when author name does not fit standard first/last pattern (e.g. Michel de Montaigne).",
         blank=True,
     )
+    description = models.TextField("Description", blank=True, null=True)
     slug = models.SlugField(
         "Slug",
         unique=True,
@@ -26,7 +27,6 @@ class Author(models.Model):
         max_length=255,
         help_text="Auto-generated from name if not provided.",
     )
-    description = models.TextField("Description", blank=True, null=True)
 
     def __str__(self):
         if self.full_name:
