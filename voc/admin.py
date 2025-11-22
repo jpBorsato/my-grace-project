@@ -21,14 +21,34 @@ def pretty_numbered_text(numbered_objs):
 
 @admin.register(Cotext)
 class CotextAdmin(admin.ModelAdmin):
-    list_display = ("id", "short_text", "text_date", "date_granularity", "reference")
+    list_display = (
+        "id",
+        "edit",
+        "short_text",
+        "text_date",
+        "date_granularity",
+        "reference",
+        "location",
+    )
+    list_display_links = ("edit",)
     search_fields = ("id", "text", "reference__title", "reference__authors__last_name")
-    list_filter = ("text_date",)
+    list_filter = (
+        "reference__authors",
+        "reference",
+    )
     autocomplete_fields = ["reference"]
+
+    @admin.display(description="Edit")
+    def edit(self, obj):
+        return "Edit"
 
     @admin.display(description="Cotext")
     def short_text(self, obj):
-        return obj.short_text(100)
+        return obj.display_text(100)
+
+    @admin.display(description="Location")
+    def location(self, obj):
+        return obj.loc_in_ref
 
 
 @admin.register(Reference)
@@ -70,7 +90,9 @@ class GrammClassAdmin(admin.ModelAdmin):
 class DefinitionAdmin(admin.ModelAdmin):
     search_fields = ("text",)
 
+
 entry_definition_intermediate = Entry.term_def.through
+
 
 class DefinitionInlineAdmin(admin.TabularInline):
     model = entry_definition_intermediate
@@ -82,10 +104,14 @@ class DefinitionInlineAdmin(admin.TabularInline):
 
 @admin.register(SpecificChar)
 class SpecificCharAdmin(admin.ModelAdmin):
-    fields = ["text",]
+    fields = [
+        "text",
+    ]
     search_fields = ("text",)
 
+
 entry_spec_char_intermediate = Entry.specific_char.through
+
 
 class SpecificCharlineAdmin(admin.TabularInline):
     model = entry_spec_char_intermediate
@@ -97,6 +123,7 @@ class SpecificCharlineAdmin(admin.TabularInline):
     @admin.display(description="Specific Characteristic")
     def specific_char(self, obj):
         return obj.specificchar.text
+
 
 @admin.register(EntryRelations)
 class EntryRelationsAdmin(admin.ModelAdmin):
@@ -197,7 +224,9 @@ class EntryAdmin(admin.ModelAdmin):
         "slug",
         "homonym_number",
     ]
-    readonly_fields = ["homonym_number",]
+    readonly_fields = [
+        "homonym_number",
+    ]
 
     list_filter = [
         "trad_term",
