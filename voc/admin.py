@@ -24,7 +24,7 @@ class CotextAdmin(admin.ModelAdmin):
     list_display = (
         "id",
         "edit",
-        "short_text",
+        "cotext_text",
         "text_date",
         "date_granularity",
         "reference",
@@ -42,9 +42,14 @@ class CotextAdmin(admin.ModelAdmin):
     def edit(self, obj):
         return "Edit"
 
-    @admin.display(description="Cotext")
-    def short_text(self, obj):
-        return obj.display_text(100)
+    @admin.display(description="Text")
+    def cotext_text(self, obj):
+        cotext = obj
+        full_text = cotext.display_text(full=True, id=False, ref=False)
+        short_text = cotext.display_text(max_length=100, id=False, ref=False)
+        return format_html(
+            f"<span title='{full_text}'>{short_text}</span>"
+        )
 
     @admin.display(description="Location")
     def location(self, obj):

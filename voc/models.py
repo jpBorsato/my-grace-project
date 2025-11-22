@@ -137,7 +137,7 @@ class Cotext(models.Model):
         verbose_name = "Cotext"
         verbose_name_plural = "Cotexts"
 
-    def display_text(self, max_length=100, full=False, id=True):
+    def display_text(self, max_length=100, full=False, id=True, ref=True):
         end = (
             max(self.text.find(" ", max_length), max_length)
             if not full
@@ -145,8 +145,9 @@ class Cotext(models.Model):
         )
         ret_str = "..." if end < (len(self.text) - 3) else ""
         loc_str = f" {self.loc_in_ref}." if self.loc_in_ref else ""
-        ref_str = f" ({self.reference}.{loc_str})" if self.reference else ""
-        return self.text[:end] + ret_str + ref_str + (f" [id: {self.id}]" if id else "")
+        ref_str = (f" ({self.reference}.{loc_str})" if self.reference else "") if ref else ""
+        id_str = f" [id: {self.id}]" if id else ""
+        return self.text[:end] + ret_str + ref_str + id_str
 
     @property
     def full_description(self):
