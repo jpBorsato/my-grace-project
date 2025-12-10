@@ -1,5 +1,9 @@
+from django import forms
 from django.contrib import admin
+from django.utils import formats
 from django.utils.html import format_html
+from django.contrib.admin.widgets import AdminDateWidget
+from django.conf import settings
 from .models import *
 
 
@@ -18,9 +22,19 @@ def pretty_numbered_text(numbered_objs):
         )
     )
 
+current_date_format = formats.get_format("DATE_INPUT_FORMATS")[0].replace("%", "")
+
+class CotextAdminForm(forms.ModelForm):
+    class Meta:
+        model = Cotext
+        fields = '__all__'
+        widgets = {
+            'text_date': AdminDateWidget(attrs={'placeholder': current_date_format}),
+        }
 
 @admin.register(Cotext)
 class CotextAdmin(admin.ModelAdmin):
+    form = CotextAdminForm
     list_display = (
         "id",
         "edit",

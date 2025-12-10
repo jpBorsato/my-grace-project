@@ -91,6 +91,7 @@ class EntryDetailView(DetailView):
             (entry.antonyms(), "antonym"),
             (entry.homonyms(), "homonym"),
             (entry.synonyms(), "synonym"),
+            (entry.near_synonyms(), "near-synonym"),
         ]:
             for e in related_list:
                 context["related_entries"].append(

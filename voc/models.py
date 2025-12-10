@@ -103,7 +103,7 @@ class Reference(models.Model):
 
 
 class Cotext(models.Model):
-    text = models.TextField("Cotext")
+    text = models.TextField("Cotext", help_text="The text should be enclosed in quotation marks (\"\").")
     text_date = models.DateField("Cotext date", null=True, blank=True)
     date_granularity = models.SmallIntegerField(
         "Cotext date granularity",
@@ -124,7 +124,7 @@ class Cotext(models.Model):
     )
     loc_in_ref = models.CharField(
         "Location in reference",
-        help_text="e.g. p. 84.",
+        help_text='e.g. "p. 84"',
         max_length=100,
         null=True,
         blank=True,
@@ -278,6 +278,7 @@ class EntryRelations(models.Model):
         choices=[
             ("SYNONYM", "Synonym"),
             ("ANTONYM", "Antonym"),
+            ("NEAR-SYNONYM", "Near-synonym"),
         ],
     )
     related_entry = models.ForeignKey(
@@ -449,6 +450,16 @@ class Entry(models.Model):
         return [
             relation.related_entry
             for relation in self.relations_as_source.filter(type="SYNONYM")
+        ]
+
+    @property
+    def has_near_synonyms(self):
+        return self.relations_as_source.filter(type="NEAR-SYNONYM").exists()
+
+    def near_synonyms(self):
+        return [
+            relation.related_entry
+            for relation in self.relations_as_source.filter(type="NEAR-SYNONYM")
         ]
 
     @property
