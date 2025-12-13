@@ -41,7 +41,7 @@ class Author(models.Model):
     class Meta:
         verbose_name = "Author"
         verbose_name_plural = "Authors"
-        ordering = ["last_name", "first_name"]
+        ordering = ["first_name"]
 
     def save(self, *args, **kwargs):
         """
@@ -158,9 +158,6 @@ class Cotext(models.Model):
 
     @property
     def template_date_format(self):
-
-        # formats = {0: None, 1: "Y", 2: "M, Y", 3: "M j, Y"}
-        # return formats[self.date_granularity]
         return get_format("COTEXT_DATE_FORMAT")[self.date_granularity][0]
 
     @property
