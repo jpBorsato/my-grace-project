@@ -17,9 +17,15 @@ Including another URLconf
 
 from django.contrib import admin
 from django.urls import path, include
+from django.utils.translation import gettext_lazy as _
+
+
+admin.site.site_header = _("Writers’ Literary Vocabulary Administration")
+admin.site.site_title = _("Writers’ Literary Vocabulary")
 
 urlpatterns = [
     path("", include("voc.urls")),
     path("api/", include("voc.api_urls")),
     path("admin/", admin.site.urls),
+    path("i18n/", include("django.conf.urls.i18n")),
 ]

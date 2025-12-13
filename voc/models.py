@@ -5,6 +5,7 @@ from django.db.models.signals import post_delete
 from django.dispatch import receiver
 from django.urls import reverse
 from django.utils.text import slugify
+from django.utils.formats import get_format, date_format
 
 
 class Author(models.Model):
@@ -157,8 +158,15 @@ class Cotext(models.Model):
 
     @property
     def template_date_format(self):
-        formats = {0: None, 1: "Y", 2: "M, Y", 3: "M j, Y"}
-        return formats[self.date_granularity]
+
+        # formats = {0: None, 1: "Y", 2: "M, Y", 3: "M j, Y"}
+        # return formats[self.date_granularity]
+        return get_format("COTEXT_DATE_FORMAT")[self.date_granularity][0]
+
+    @property
+    def template_date_str_local(self):
+        fmt, f = get_format("COTEXT_DATE_FORMAT")[self.date_granularity]
+        return f(date_format(self.text_date, fmt))
 
 
 class TradTerm(models.Model):

@@ -1,0 +1,131 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-12-13 16:13-0300\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+#: voc/templates/base.html:10 voc/templates/base.html:23
+msgid "Vocabulário de Escritores de Literatura"
+msgstr "Vocabulário de Escritores de Literatura"
+
+#: voc/templates/base.html:37 voc/templates/voc/author_list.html:3
+#: voc/templates/voc/author_list.html:7
+msgid "Authors"
+msgstr "Autores"
+
+#: voc/templates/base.html:41 voc/templates/voc/category_list.html:3
+#: voc/templates/voc/category_list.html:7
+msgid "Categories"
+msgstr "Categorias"
+
+#: voc/templates/base.html:45
+msgid "Entries by Category"
+msgstr "Entradas por Categoria"
+
+#: voc/templates/base.html:49 voc/templates/voc/entry_list.html:3
+#: voc/templates/voc/entry_list.html:7
+msgid "Entries"
+msgstr "Entradas"
+
+#: voc/templates/base.html:53
+msgid "Admin"
+msgstr "Administração"
+
+#: voc/templates/base.html:58
+msgid "Sign In"
+msgstr "Identificar-se"
+
+#: voc/templates/base.html:75
+msgid "Language"
+msgstr "Língua"
+
+#: voc/templates/base.html:86
+msgid "Search by authors, entries or categories"
+msgstr "Procurar por autores, entradas ou categorias"
+
+#: voc/templates/base.html:88
+msgid "Search"
+msgstr "Procurar"
+
+#: voc/templates/voc/author_entry_list.html:3
+#: voc/templates/voc/author_entry_list.html:7
+#, python-format
+msgid "Entries by %(author)s"
+msgstr "Entradas por %(author)s"
+
+#: voc/templates/voc/category_entry_list.html:3
+#: voc/templates/voc/category_entry_list.html:6
+#, python-format
+msgid "Entries in the category \"%(category_title)s\""
+msgstr "Entradas na categoria \"%(category_title)s\""
+
+#: voc/templates/voc/entry_by_category_list.html:3
+#: voc/templates/voc/entry_by_category_list.html:7
+msgid "Entries by Categories"
+msgstr "Entradas por Categorias"
+
+#: voc/templates/voc/entry_detail.html:9
+msgid "edit"
+msgstr "editar"
+
+#: voc/templates/voc/entry_detail.html:40
+msgid "Category"
+msgstr "Categoria"
+
+#: voc/templates/voc/entry_detail.html:43
+msgid "Cotext"
+msgstr "Cotexto"
+
+#: voc/templates/voc/entry_detail.html:46
+msgid "Reference"
+msgstr "Referência"
+
+#: voc/templates/voc/entry_detail.html:60
+msgid "See also"
+msgstr "Veja também"
+
+#: voc/templates/voc/entry_detail.html:69
+msgid "by"
+msgstr "por"
+
+#: voc/views.py:94
+msgid "antonym"
+msgstr "antônimo"
+
+#: voc/views.py:95
+msgid "homonym"
+msgstr "homônimo"
+
+#: voc/views.py:96
+msgid "synonym"
+msgstr "sinônimo"
+
+#: voc/views.py:97
+msgid "near-synonym"
+msgstr "parassinônimo"
+
+#: voc/views.py:219
+msgid "authors"
+msgstr "autores"
+
+#: voc/views.py:220
+msgid "categories"
+msgstr "categorias"
+
+#: voc/views.py:224
+msgid "entries"
+msgstr "entradas"

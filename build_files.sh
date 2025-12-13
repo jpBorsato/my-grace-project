@@ -13,3 +13,6 @@ python3 manage.py collectstatic --noinput
 
 echo "Ensuring superuser..."
 python3 manage.py shell -v 0 < ensure_superuser.py
+
+echo "Compiling message files..."
+python3 manage.py compilemessages

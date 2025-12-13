@@ -5,6 +5,9 @@ from django.db import connection
 from django.views.generic import ListView, DetailView
 from datetime import datetime
 from dotenv import load_dotenv
+from django.utils.formats import get_format
+from django.utils.translation import gettext as _
+
 
 
 from voc.models import Author, Entry, TradTerm
@@ -88,10 +91,10 @@ class EntryDetailView(DetailView):
         entry = context["entry"]
         context["related_entries"] = []
         for related_list, type in [
-            (entry.antonyms(), "antonym"),
-            (entry.homonyms(), "homonym"),
-            (entry.synonyms(), "synonym"),
-            (entry.near_synonyms(), "near-synonym"),
+            (entry.antonyms(), _("antonym")),
+            (entry.homonyms(), _("homonym")),
+            (entry.synonyms(), _("synonym")),
+            (entry.near_synonyms(), _("near-synonym")),
         ]:
             for e in related_list:
                 context["related_entries"].append(
@@ -213,12 +216,12 @@ def search(request):
         return JsonResponse(
             {
                 "results": {
-                    "entries": {"list": entries_list, "url": "entries/"},
-                    "authors": {"list": authors_list, "url": "entries/?author="},
-                    "categories": {
+                    _("authors"): {"list": authors_list, "url": "entries/?author="},
+                    _("categories"): {
                         "list": categories_list,
                         "url": "entries/?category=",
                     },
+                    _("entries"): {"list": entries_list, "url": "entries/"},
                 }
             }
         )
