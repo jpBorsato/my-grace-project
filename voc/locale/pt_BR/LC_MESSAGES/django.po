@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-12-13 16:13-0300\n"
+"POT-Creation-Date: 2026-05-14 19:26+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,28 +18,387 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
+#: voc/admin.py:56 voc/admin.py:58 voc/admin.py:164 voc/admin.py:166
+#: voc/admin.py:315 voc/admin.py:317
+msgid "Edit"
+msgstr "Editar"
+
+#: voc/admin.py:60
+msgid "Text"
+msgstr "Texto"
+
+#: voc/admin.py:69
+msgid "Location"
+msgstr "Localização"
+
+#: voc/admin.py:120 voc/models.py:228 voc/models.py:234
+msgid "Definition"
+msgstr "Definição"
+
+#: voc/admin.py:121 voc/models.py:235
+msgid "Definitions"
+msgstr "Definições"
+
+#: voc/admin.py:139 voc/admin.py:143 voc/models.py:245
+msgid "Specific Characteristic"
+msgstr "Características específicas"
+
+#: voc/admin.py:140 voc/admin.py:301 voc/models.py:246
+msgid "Specific Characteristics"
+msgstr "Características Específicas"
+
+#: voc/admin.py:169
+msgid "Has Symmetrical"
+msgstr "Tem Simétrica"
+
+#: voc/admin.py:174
+msgid "View Entry On Site"
+msgstr "Ver Verbete no Site"
+
+#: voc/admin.py:180
+msgid "View Rel. Entry On Site"
+msgstr "Ver Verbete Rel. No Site"
+
+#: voc/admin.py:198
+msgid "Entry Relation"
+msgstr "Relações Entre Verbetes"
+
+#: voc/admin.py:199 voc/models.py:298
+msgid "Entry Relations"
+msgstr "Relações Entre Verbetes"
+
+#: voc/admin.py:275 voc/models.py:108 voc/models.py:139 voc/models.py:374
+#: voc/templates/voc/entry_detail.html:43
+msgid "Cotext"
+msgstr "Cotexto"
+
+#: voc/admin.py:284 voc/models.py:213 voc/models.py:222 voc/models.py:355
+msgid "Term"
+msgstr "Termo"
+
+#: voc/admin.py:290
+msgid "Phonetic Transcription"
+msgstr "Transcrição Fonética"
+
+#: voc/admin.py:294
+msgid "Term Definitions"
+msgstr "Definição do Termo"
+
+#: voc/admin.py:305
+msgid "Trad. Term Definition"
+msgstr "Definição do Termo Trad."
+
+#: voc/admin.py:311
+msgid "View On Site"
+msgstr "Ver No Site"
+
+#: voc/admin.py:313
+msgid "View"
+msgstr "Ver"
+
+#: voc/models.py:15
+msgid "First name"
+msgstr "Primeiro nome"
+
+#: voc/models.py:16
+msgid "Last name"
+msgstr "Sobrenome"
+
+#: voc/models.py:18
+msgid "Full name"
+msgstr "Nome completo"
+
+#: voc/models.py:20
+msgid ""
+"Used when author name does not fit standard first/last pattern (e.g. Michel "
+"de Montaigne)."
+msgstr ""
+"Usado quando o nome do autor não segue o padrão de nome e sobrenome (e.g. "
+"Michel de Montaigne)."
+
+#: voc/models.py:23
+msgid "Description"
+msgstr "Descrição"
+
+#: voc/models.py:25 voc/models.py:174 voc/models.py:415
+msgid "Slug"
+msgstr "Slug"
+
+#: voc/models.py:30
+msgid "Auto-generated from name if not provided."
+msgstr "Autogerado se não fornecido."
+
+#: voc/models.py:43
+msgid "Author"
+msgstr "Autores"
+
+#: voc/models.py:44 voc/templates/base.html:37
+#: voc/templates/voc/author_list.html:3 voc/templates/voc/author_list.html:7
+msgid "Authors"
+msgstr "Autores"
+
+#: voc/models.py:61
+msgid "Title"
+msgstr "Título"
+
+#: voc/models.py:62
+msgid "Publication year"
+msgstr "Ano de publicação"
+
+#: voc/models.py:63
+msgid "Publisher"
+msgstr "Editora"
+
+#: voc/models.py:64
+msgid "Publication city"
+msgstr "Cidade de publicação"
+
+#: voc/models.py:66
+msgid "Source type"
+msgstr "Tipo de fonte"
+
+#: voc/models.py:69
+msgid "Book"
+msgstr "Livro"
+
+#: voc/models.py:70
+msgid "Article"
+msgstr "Artigo"
+
+#: voc/models.py:71
+msgid "Book Chapter"
+msgstr "Capítulo do livro"
+
+#: voc/models.py:72
+msgid "Thesis"
+msgstr "Tese"
+
+#: voc/models.py:73
+msgid "Online Resource"
+msgstr "Recurso online"
+
+#: voc/models.py:74
+msgid "Other"
+msgstr "Outro"
+
+#: voc/models.py:79
+msgid "Formatted citation"
+msgstr "Citação formatada"
+
+#: voc/models.py:81
+msgid "Optional preformatted citation text (e.g. APA or ABNT style)."
+msgstr "Citação pré-formatada opcional (e.g. APA ou ABNT)."
+
+#: voc/models.py:87
+msgid "Unknown author"
+msgstr "Autor desconhecido"
+
+#: voc/models.py:102 voc/templates/voc/entry_detail.html:46
+msgid "Reference"
+msgstr "Referência"
+
+#: voc/models.py:103
+msgid "References"
+msgstr "Referências"
+
+#: voc/models.py:108
+msgid "The text should be enclosed in quotation marks (\"\")."
+msgstr "O texto deve estar entre aspas (\"\")."
+
+#: voc/models.py:109
+msgid "Cotext date"
+msgstr "Data do cotexto"
+
+#: voc/models.py:111
+msgid "Cotext date granularity"
+msgstr "Granularidade da data do cotexto"
+
+#: voc/models.py:113
+msgid "No date"
+msgstr "Sem data"
+
+#: voc/models.py:114
+msgid "Year"
+msgstr "Ano"
+
+#: voc/models.py:115
+msgid "Year and month"
+msgstr "Mês e ano"
+
+#: voc/models.py:116
+msgid "Full date"
+msgstr "Data completa"
+
+#: voc/models.py:128
+msgid "Location in reference"
+msgstr "Localização na referência"
+
+#: voc/models.py:129
+msgid "e.g. \"p. 84\""
+msgstr "e.g. \"p. 84\""
+
+#: voc/models.py:140
+msgid "Cotexts"
+msgstr "Cotextos"
+
+#: voc/models.py:171 voc/models.py:392
+msgid "Traditional term"
+msgstr "Termo tradicional"
+
+#: voc/models.py:172
+msgid "Traditional term definition"
+msgstr "Definição do termo tradicional"
+
+#: voc/models.py:179
+msgid "Auto-generated from text if not provided."
+msgstr "Autogerado do texto se não fornecido."
+
+#: voc/models.py:186
+msgid "Traditional Term"
+msgstr "Termo Tradicional"
+
+#: voc/models.py:187
+msgid "Traditional Terms"
+msgstr "Termos Tradicionais"
+
+#: voc/models.py:201 voc/models.py:382
+msgid "General characteristic"
+msgstr "Característica geral"
+
+#: voc/models.py:207
+msgid "General Characteristic"
+msgstr "Característica Geral"
+
+#: voc/models.py:208
+msgid "General Characteristics"
+msgstr "Características Gerais"
+
+#: voc/models.py:215
+msgid "Phonetic transcription"
+msgstr "Transcrição fonética"
+
+#: voc/models.py:223
+msgid "Terms"
+msgstr "Termos"
+
+#: voc/models.py:239 voc/models.py:388 voc/models.py:532
+msgid "Specific characteristic"
+msgstr "Característica específica"
+
+#: voc/models.py:251
+msgid "Relation"
+msgstr "Relação"
+
+#: voc/models.py:257
+msgid "Relation Between Term and Traditional Term"
+msgstr "Relação Entre Termo e Termo Tradicional"
+
+#: voc/models.py:258
+msgid "Relations Between Term and Traditional Term"
+msgstr "Relações Entre Termo e Termo Tradicional"
+
+#: voc/models.py:263
+msgid "Grammatical class"
+msgstr "Classe gramatical"
+
+#: voc/models.py:269
+msgid "Grammatical Class"
+msgstr "Classe Gramatical"
+
+#: voc/models.py:270
+msgid "Grammatical Classes"
+msgstr "Classes Gramaticais"
+
+#: voc/models.py:277 voc/models.py:426
+msgid "Entry"
+msgstr "Verbete"
+
+#: voc/models.py:282
+msgid "Relation type"
+msgstr "Tipo de relação"
+
+#: voc/models.py:285
+msgid "Synonym"
+msgstr "Sinônimo"
+
+#: voc/models.py:286
+msgid "Antonym"
+msgstr "Antônimo"
+
+#: voc/models.py:287
+msgid "Near-synonym"
+msgstr "Parassinônimo"
+
+#: voc/models.py:292
+msgid "Related Entry"
+msgstr "Verbete Relacionado"
+
+#: voc/models.py:358
+msgid "Homonym number"
+msgstr "Número de homônimo"
+
+#: voc/models.py:360
+msgid ""
+"Used to distinguish homonymous entries of the same term (e.g., ¹, ², ³)."
+msgstr ""
+"Usado para distinguir verbetes homônimos do mesmo termo (e.g., ¹, ², ³)."
+
+#: voc/models.py:364
+msgid "Related entries"
+msgstr "Verbetes relacionados"
+
+#: voc/models.py:369
+msgid "Term definition"
+msgstr "Definição do termo"
+
+#: voc/models.py:379
+msgid "Conceptual analysis"
+msgstr "Análise conceitual"
+
+#: voc/models.py:399
+msgid "Relation Term and Trad. Term"
+msgstr "Relação Termo e Termo Trad."
+
+#: voc/models.py:406
+msgid "Term grammatical class"
+msgstr "Classe gramatical do termo"
+
+#: voc/models.py:411
+msgid "Note"
+msgstr "Nota"
+
+#: voc/models.py:412
+msgid "Created at"
+msgstr "Criado em"
+
+#: voc/models.py:413
+msgid "Updated at"
+msgstr "Atualizado em"
+
+#: voc/models.py:420
+msgid "Auto-generated from term text and homonym number if not provided."
+msgstr "Autogerado do termo e do número de homônimo se não fornecido."
+
+#: voc/models.py:427 voc/templates/voc/entry_list.html:3
+msgid "Entries"
+msgstr "Verbetes"
+
 #: voc/templates/base.html:10 voc/templates/base.html:23
 msgid "Vocabulário de Escritores de Literatura"
 msgstr "Vocabulário de Escritores de Literatura"
-
-#: voc/templates/base.html:37 voc/templates/voc/author_list.html:3
-#: voc/templates/voc/author_list.html:7
-msgid "Authors"
-msgstr "Autores"
 
 #: voc/templates/base.html:41 voc/templates/voc/category_list.html:3
 #: voc/templates/voc/category_list.html:7
 msgid "Categories"
 msgstr "Categorias"
 
-#: voc/templates/base.html:45
+#: voc/templates/base.html:45 voc/templates/voc/entry_by_category_list.html:7
 msgid "Entries by Category"
-msgstr "Entradas por Categoria"
+msgstr "Verbetes por Categoria"
 
-#: voc/templates/base.html:49 voc/templates/voc/entry_list.html:3
-#: voc/templates/voc/entry_list.html:7
-msgid "Entries"
-msgstr "Entradas"
+#: voc/templates/base.html:49 voc/templates/voc/entry_list.html:7
+msgid "Entries in alphabetical order"
+msgstr "Verbetes em ordem alfabética"
 
 #: voc/templates/base.html:53
 msgid "Admin"
@@ -55,7 +414,7 @@ msgstr "Língua"
 
 #: voc/templates/base.html:86
 msgid "Search by authors, entries or categories"
-msgstr "Procurar por autores, entradas ou categorias"
+msgstr "Procurar por autores, verbetes ou categorias"
 
 #: voc/templates/base.html:88
 msgid "Search"
@@ -65,18 +424,17 @@ msgstr "Procurar"
 #: voc/templates/voc/author_entry_list.html:7
 #, python-format
 msgid "Entries by %(author)s"
-msgstr "Entradas por %(author)s"
+msgstr "Verbetes por %(author)s"
 
 #: voc/templates/voc/category_entry_list.html:3
 #: voc/templates/voc/category_entry_list.html:6
 #, python-format
 msgid "Entries in the category \"%(category_title)s\""
-msgstr "Entradas na categoria \"%(category_title)s\""
+msgstr "Verbetes na categoria \"%(category_title)s\""
 
 #: voc/templates/voc/entry_by_category_list.html:3
-#: voc/templates/voc/entry_by_category_list.html:7
 msgid "Entries by Categories"
-msgstr "Entradas por Categorias"
+msgstr "Verbetes por Categorias"
 
 #: voc/templates/voc/entry_detail.html:9
 msgid "edit"
@@ -85,14 +443,6 @@ msgstr "editar"
 #: voc/templates/voc/entry_detail.html:40
 msgid "Category"
 msgstr "Categoria"
-
-#: voc/templates/voc/entry_detail.html:43
-msgid "Cotext"
-msgstr "Cotexto"
-
-#: voc/templates/voc/entry_detail.html:46
-msgid "Reference"
-msgstr "Referência"
 
 #: voc/templates/voc/entry_detail.html:60
 msgid "See also"
@@ -128,4 +478,4 @@ msgstr "categorias"
 
 #: voc/views.py:224
 msgid "entries"
-msgstr "entradas"
+msgstr "verbetes"

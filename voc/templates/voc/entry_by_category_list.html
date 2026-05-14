@@ -4,7 +4,7 @@
 {% block extra_css %}{% endblock %}
 {% block content %}
 <div class="container mt-4">
-  <h4>{% translate "Entries by Categories" %}:</h4>
+  <h4>{% translate "Entries by Category" %}:</h4>
     <ul class="mb-3">
     {% regroup entry_list by trad_term as category_list %}
     {% for category in category_list %}

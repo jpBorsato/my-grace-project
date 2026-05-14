@@ -6,27 +6,28 @@ from django.dispatch import receiver
 from django.urls import reverse
 from django.utils.text import slugify
 from django.utils.formats import get_format, date_format
+from django.utils.translation import gettext_lazy as _
 
 
 class Author(models.Model):
     """Represents an author of a bibliographic reference."""
 
-    first_name = models.CharField("First name", max_length=100, blank=True)
-    last_name = models.CharField("Last name", max_length=100)
+    first_name = models.CharField(_("First name"), max_length=100, blank=True)
+    last_name = models.CharField(_("Last name"), max_length=100)
     full_name = models.CharField(
-        "Full name",
+        _("Full name"),
         max_length=255,
-        help_text="Used when author name does not fit standard first/last pattern (e.g. Michel de Montaigne).",
+        help_text=_("Used when author name does not fit standard first/last pattern (e.g. Michel de Montaigne)."),
         blank=True,
     )
-    description = models.TextField("Description", blank=True, null=True)
+    description = models.TextField(_("Description"), blank=True, null=True)
     slug = models.SlugField(
-        "Slug",
+        _("Slug"),
         unique=True,
         blank=True,
         null=True,
         max_length=255,
-        help_text="Auto-generated from name if not provided.",
+        help_text=_("Auto-generated from name if not provided."),
     )
 
     def __str__(self):
@@ -39,8 +40,8 @@ class Author(models.Model):
         )
 
     class Meta:
-        verbose_name = "Author"
-        verbose_name_plural = "Authors"
+        verbose_name = _("Author")
+        verbose_name_plural = _("Authors")
         ordering = ["first_name"]
 
     def save(self, *args, **kwargs):
@@ -57,33 +58,33 @@ class Reference(models.Model):
     """Stores bibliographic references with structured metadata."""
 
     authors = models.ManyToManyField(Author, related_name="references", blank=True)
-    title = models.CharField("Title", max_length=500)
-    year = models.PositiveIntegerField("Publication year", null=True, blank=True)
-    publisher = models.CharField("Publisher", max_length=255, null=True, blank=True)
-    city = models.CharField("Publication city", max_length=255, null=True, blank=True)
+    title = models.CharField(_("Title"), max_length=500)
+    year = models.PositiveIntegerField(_("Publication year"), null=True, blank=True)
+    publisher = models.CharField(_("Publisher"), max_length=255, null=True, blank=True)
+    city = models.CharField(_("Publication city"), max_length=255, null=True, blank=True)
     source_type = models.CharField(
-        "Source type",
+        _("Source type"),
         max_length=50,
         choices=[
-            ("BOOK", "Book"),
-            ("ARTICLE", "Article"),
-            ("CHAPTER", "Book Chapter"),
-            ("THESIS", "Thesis"),
-            ("ONLINE", "Online Resource"),
-            ("OTHER", "Other"),
+            ("BOOK", _("Book")),
+            ("ARTICLE", _("Article")),
+            ("CHAPTER", _("Book Chapter")),
+            ("THESIS", _("Thesis")),
+            ("ONLINE", _("Online Resource")),
+            ("OTHER", _("Other")),
         ],
         default="BOOK",
     )
     citation = models.TextField(
-        "Formatted citation",
+        _("Formatted citation"),
         blank=True,
-        help_text="Optional preformatted citation text (e.g. APA or ABNT style).",
+        help_text=_("Optional preformatted citation text (e.g. APA or ABNT style)."),
     )
 
     def formatted_authors(self):
         authors = self.authors.all()
         if not authors:
-            return "Unknown author"
+            return _("Unknown author")
         if len(authors) == 1:
             return str(authors[0])
         elif len(authors) == 2:
@@ -98,21 +99,21 @@ class Reference(models.Model):
         return base
 
     class Meta:
-        verbose_name = "Reference"
-        verbose_name_plural = "References"
+        verbose_name = _("Reference")
+        verbose_name_plural = _("References")
         ordering = ["title"]
 
 
 class Cotext(models.Model):
-    text = models.TextField("Cotext", help_text="The text should be enclosed in quotation marks (\"\").")
-    text_date = models.DateField("Cotext date", null=True, blank=True)
+    text = models.TextField(_("Cotext"), help_text=_("The text should be enclosed in quotation marks (\"\")."))
+    text_date = models.DateField(_("Cotext date"), null=True, blank=True)
     date_granularity = models.SmallIntegerField(
-        "Cotext date granularity",
+        _("Cotext date granularity"),
         choices=[
-            (0, "No date"),
-            (1, "Year"),
-            (2, "Year and month"),
-            (3, "Full date"),
+            (0, _("No date")),
+            (1, _("Year")),
+            (2, _("Year and month")),
+            (3, _("Full date")),
         ],
         default=3,
     )
@@ -124,8 +125,8 @@ class Cotext(models.Model):
         related_name="cotexts",
     )
     loc_in_ref = models.CharField(
-        "Location in reference",
-        help_text='e.g. "p. 84"',
+        _("Location in reference"),
+        help_text=_('e.g. "p. 84"'),
         max_length=100,
         null=True,
         blank=True,
@@ -135,8 +136,8 @@ class Cotext(models.Model):
         return self.display_text(30)
 
     class Meta:
-        verbose_name = "Cotext"
-        verbose_name_plural = "Cotexts"
+        verbose_name = _("Cotext")
+        verbose_name_plural = _("Cotexts")
 
     def display_text(self, max_length=100, full=False, id=True, ref=True):
         end = (
@@ -167,23 +168,23 @@ class Cotext(models.Model):
 
 
 class TradTerm(models.Model):
-    text = models.CharField("Traditional term", max_length=255)
-    definition = models.TextField("Traditional term definition")
+    text = models.CharField(_("Traditional term"), max_length=255)
+    definition = models.TextField(_("Traditional term definition"))
     slug = models.SlugField(
-        "Slug",
+        _("Slug"),
         unique=True,
         blank=True,
         null=True,
         max_length=255,
-        help_text="Auto-generated from text if not provided.",
+        help_text=_("Auto-generated from text if not provided."),
     )
 
     def __str__(self):
         return self.text
 
     class Meta:
-        verbose_name = "Traditional Term"
-        verbose_name_plural = "Traditional Terms"
+        verbose_name = _("Traditional Term")
+        verbose_name_plural = _("Traditional Terms")
         ordering = ["text"]
 
     def save(self, *args, **kwargs):
@@ -197,104 +198,104 @@ class TradTerm(models.Model):
 
 
 class GeneralChar(models.Model):
-    text = models.CharField("General characteristic", max_length=255)
+    text = models.CharField(_("General characteristic"), max_length=255)
 
     def __str__(self):
         return self.text
 
     class Meta:
-        verbose_name = "General Characteristic"
-        verbose_name_plural = "General Characteristics"
+        verbose_name = _("General Characteristic")
+        verbose_name_plural = _("General Characteristics")
         ordering = ["text"]
 
 
 class Term(models.Model):
-    text = models.TextField("Term")
+    text = models.TextField(_("Term"))
     phonetic_transcription = models.CharField(
-        "Phonetic transcription", max_length=100, null=True, blank=True
+        _("Phonetic transcription"), max_length=100, null=True, blank=True
     )
 
     def __str__(self):
         return self.text or f"Entry {self.id}"
 
     class Meta:
-        verbose_name = "Term"
-        verbose_name_plural = "Terms"
+        verbose_name = _("Term")
+        verbose_name_plural = _("Terms")
         ordering = ["text"]
 
 
 class Definition(models.Model):
-    text = models.TextField("Definition")
+    text = models.TextField(_("Definition"))
 
     def __str__(self):
         return self.text
 
     class Meta:
-        verbose_name = "Definition"
-        verbose_name_plural = "Definitions"
+        verbose_name = _("Definition")
+        verbose_name_plural = _("Definitions")
 
 
 class SpecificChar(models.Model):
-    text = models.CharField("Specific characteristic", max_length=255)
+    text = models.CharField(_("Specific characteristic"), max_length=255)
 
     def __str__(self):
         return self.text
 
     class Meta:
-        verbose_name = "Specific Characteristic"
-        verbose_name_plural = "Specific Characteristics"
+        verbose_name = _("Specific Characteristic")
+        verbose_name_plural = _("Specific Characteristics")
         ordering = ["text"]
 
 
 class TradRelation(models.Model):
-    text = models.CharField("Relation", max_length=255)
+    text = models.CharField(_("Relation"), max_length=255)
 
     def __str__(self):
         return self.text
 
     class Meta:
-        verbose_name = "Relation Between Term and Traditional Term"
-        verbose_name_plural = "Relations Between Term and Traditional Term"
+        verbose_name = _("Relation Between Term and Traditional Term")
+        verbose_name_plural = _("Relations Between Term and Traditional Term")
         ordering = ["text"]
 
 
 class GrammClass(models.Model):
-    text = models.CharField("Grammatical class", max_length=255)
+    text = models.CharField(_("Grammatical class"), max_length=255)
 
     def __str__(self):
         return self.text
 
     class Meta:
-        verbose_name = "Grammatical Class"
-        verbose_name_plural = "Grammatical Classes"
+        verbose_name = _("Grammatical Class")
+        verbose_name_plural = _("Grammatical Classes")
         ordering = ["text"]
 
 
 class EntryRelations(models.Model):
     entry = models.ForeignKey(
         "Entry",
-        verbose_name="Entry",
+        verbose_name=_("Entry"),
         on_delete=models.CASCADE,
         related_name="relations_as_source",
     )
     type = models.CharField(
-        "Relation type",
+        _("Relation type"),
         max_length=50,
         choices=[
-            ("SYNONYM", "Synonym"),
-            ("ANTONYM", "Antonym"),
-            ("NEAR-SYNONYM", "Near-synonym"),
+            ("SYNONYM", _("Synonym")),
+            ("ANTONYM", _("Antonym")),
+            ("NEAR-SYNONYM", _("Near-synonym")),
         ],
     )
     related_entry = models.ForeignKey(
         "Entry",
-        verbose_name="Related Entry",
+        verbose_name=_("Related Entry"),
         on_delete=models.CASCADE,
         related_name="relations_as_target",
     )
 
     class Meta:
-        verbose_name = "Entry Relations"
+        verbose_name = _("Entry Relations")
         verbose_name_plural = verbose_name
         ordering = ["entry", "type", "related_entry"]
         unique_together = ("entry", "type", "related_entry")
@@ -351,79 +352,79 @@ class EntryManager(models.Manager):
 
 class Entry(models.Model):
     term = models.ForeignKey(
-        Term, verbose_name="Term", on_delete=models.CASCADE, related_name="entries"
+        Term, verbose_name=_("Term"), on_delete=models.CASCADE, related_name="entries"
     )
     homonym_number = models.PositiveSmallIntegerField(
-        "Homonym number",
+        _("Homonym number"),
         default=1,
-        help_text="Used to distinguish homonymous entries of the same term (e.g., ¹, ², ³).",
+        help_text=_("Used to distinguish homonymous entries of the same term (e.g., ¹, ², ³)."),
     )
     related_entries = models.ManyToManyField(
         "self",
-        verbose_name="Related entries",
+        verbose_name=_("Related entries"),
         through=EntryRelations,
         blank=True,
     )
     term_def = models.ManyToManyField(
-        Definition, verbose_name="Term definition", related_name="entries"
+        Definition, verbose_name=_("Term definition"), related_name="entries"
     )
     cotext = models.ForeignKey(
         Cotext,
         on_delete=models.SET_NULL,
-        verbose_name="Cotext",
+        verbose_name=_("Cotext"),
         related_name="entries",
         null=True,
         blank=True,
     )
-    concept_anl = models.TextField("Conceptual analysis")
+    concept_anl = models.TextField(_("Conceptual analysis"))
     general_char = models.ForeignKey(
         GeneralChar,
-        verbose_name="General characteristic",
+        verbose_name=_("General characteristic"),
         null=True,
         on_delete=models.SET_NULL,
         related_name="entries",
     )
     specific_char = models.ManyToManyField(
-        SpecificChar, verbose_name="Specific characteristic", related_name="entries"
+        SpecificChar, verbose_name=_("Specific characteristic"), related_name="entries"
     )
     trad_term = models.ForeignKey(
         TradTerm,
-        verbose_name="Traditional term",
+        verbose_name=_("Traditional term"),
         null=True,
         on_delete=models.SET_NULL,
         related_name="entries",
     )
     trad_relation = models.ForeignKey(
         TradRelation,
-        verbose_name="Relation Term and Trad. Term",
+        verbose_name=_("Relation Term and Trad. Term"),
         null=True,
         on_delete=models.SET_NULL,
         related_name="entries",
     )
     term_gramm_class = models.ForeignKey(
         GrammClass,
-        verbose_name="Term grammatical class",
+        verbose_name=_("Term grammatical class"),
         null=True,
         on_delete=models.SET_NULL,
         related_name="entries",
     )
-    note = models.TextField("Note", null=True, blank=True)
-    created_at = models.DateTimeField(verbose_name="Created at", auto_now_add=True)
-    updated_at = models.DateTimeField(verbose_name="Updated at", auto_now=True)
+    note = models.TextField(_("Note"), null=True, blank=True)
+    created_at = models.DateTimeField(verbose_name=_("Created at"), auto_now_add=True)
+    updated_at = models.DateTimeField(verbose_name=_("Updated at"), auto_now=True)
     slug = models.SlugField(
-        "Slug",
+        _("Slug"),
         unique=True,
         blank=True,
         null=True,
         max_length=255,
-        help_text="Auto-generated from term text and homonym number if not provided.",
+        help_text=_("Auto-generated from term text and homonym number if not provided."),
     )
 
     objects = EntryManager()
 
     class Meta:
-        verbose_name = "Entry"
-        verbose_name_plural = "Entries"
+        verbose_name = _("Entry")
+        verbose_name_plural = _("Entries")
         ordering = ["id"]
         unique_together = ("term", "homonym_number")
 
@@ -528,7 +529,7 @@ entry_definition_intermediate = Entry.term_def.through
 entry_definition_intermediate.__str__ = lambda obj: ""
 
 entry_specificchar_intermediate = Entry.specific_char.through
-entry_specificchar_intermediate.specificchar.verbose_name = "Specific characteristic"
+entry_specificchar_intermediate.specificchar.verbose_name = _("Specific characteristic")
 entry_specificchar_intermediate.__str__ = lambda obj: ""
 entry_specificchar_intermediate._meta.ordering = ["entry", "specificchar"]
 

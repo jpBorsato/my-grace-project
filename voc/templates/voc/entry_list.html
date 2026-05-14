@@ -4,7 +4,7 @@
 {% block extra_css %}{% endblock %}
 {% block content %}
 <div class="container mt-4">
-  <h4>{% translate "Entries" %}:</h4>
+  <h4>{% translate "Entries in alphabetical order" %}:</h4>
       <ul class="mb-3">
         {% for entry in entry_list %}
           <li><h6 class="mt-2">{% include "voc/entry_with_tooltip.html" with placement="right" %}</h6></li>

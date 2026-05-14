@@ -2,6 +2,7 @@ from django import forms
 from django.contrib import admin
 from django.utils import formats
 from django.utils.html import format_html
+from django.utils.translation import gettext_lazy as _
 from django.contrib.admin.widgets import AdminDateWidget
 from django.conf import settings
 from .models import *
@@ -52,11 +53,11 @@ class CotextAdmin(admin.ModelAdmin):
     )
     autocomplete_fields = ["reference"]
 
-    @admin.display(description="Edit")
+    @admin.display(description=_("Edit"))
     def edit(self, obj):
-        return "Edit"
+        return _("Edit")
 
-    @admin.display(description="Text")
+    @admin.display(description=_("Text"))
     def cotext_text(self, obj):
         cotext = obj
         full_text = cotext.display_text(full=True, id=False, ref=False)
@@ -65,7 +66,7 @@ class CotextAdmin(admin.ModelAdmin):
             f"<span title='{full_text}'>{short_text}</span>"
         )
 
-    @admin.display(description="Location")
+    @admin.display(description=_("Location"))
     def location(self, obj):
         return obj.loc_in_ref
 
@@ -116,8 +117,8 @@ entry_definition_intermediate = Entry.term_def.through
 class DefinitionInlineAdmin(admin.TabularInline):
     model = entry_definition_intermediate
     autocomplete_fields = ["definition"]
-    verbose_name = "Definition"
-    verbose_name_plural = "Definitions"
+    verbose_name = _("Definition")
+    verbose_name_plural = _("Definitions")
     extra = 0
 
 
@@ -135,11 +136,11 @@ entry_spec_char_intermediate = Entry.specific_char.through
 class SpecificCharlineAdmin(admin.TabularInline):
     model = entry_spec_char_intermediate
     autocomplete_fields = ["specificchar"]
-    verbose_name = "Specific Characteristic"
-    verbose_name_plural = "Specific Characteristics"
+    verbose_name = _("Specific Characteristic")
+    verbose_name_plural = _("Specific Characteristics")
     extra = 0
 
-    @admin.display(description="Specific Characteristic")
+    @admin.display(description=_("Specific Characteristic"))
     def specific_char(self, obj):
         return obj.specificchar.text
 
@@ -160,23 +161,23 @@ class EntryRelationsAdmin(admin.ModelAdmin):
         "edit",
     ]
 
-    @admin.display(description="Edit")
+    @admin.display(description=_("Edit"))
     def edit(self, obj):
-        return "Edit"
+        return _("Edit")
 
     @admin.display(
-        description="Has Symmetrical", boolean=True, ordering="has_symmetrical"
+        description=_("Has Symmetrical"), boolean=True, ordering="has_symmetrical"
     )
     def has_symmetrical(self, obj):
         return obj.has_symmetrical
 
-    @admin.display(description="View Entry On Site")
+    @admin.display(description=_("View Entry On Site"))
     def view_entry_on_site(self, obj):
         return format_html(
             f"<a target='_blank' href={obj.entry.get_absolute_url()}>View</a>"
         )
 
-    @admin.display(description="View Rel. Entry On Site")
+    @admin.display(description=_("View Rel. Entry On Site"))
     def view_rel_entry_on_site(self, obj):
         return format_html(
             f"<a target='_blank' href={obj.related_entry.get_absolute_url()}>View</a>"
@@ -194,8 +195,8 @@ class EntryRelationsAdmin(admin.ModelAdmin):
 class EntryRelationsInline(admin.TabularInline):
     model = EntryRelations
     fk_name = "entry"
-    verbose_name = "Entry Relation"
-    verbose_name_plural = "Entry Relations"
+    verbose_name = _("Entry Relation")
+    verbose_name_plural = _("Entry Relations")
     extra = 0
     fields = (
         "type",
@@ -212,7 +213,7 @@ class EntryAdmin(admin.ModelAdmin):
         "view",
         "edit_term",
         "phonetic_transcription",
-        "term_definitions",
+        "term_gramm_class",
         "edit_cotext",
         "cotext__text_date",
         "concept_anl",
@@ -221,7 +222,7 @@ class EntryAdmin(admin.ModelAdmin):
         "trad_term",
         "trad_term_def",
         "trad_relation",
-        "term_gramm_class",
+        "term_definitions",
         "note",
         "created_at",
         "updated_at",
@@ -271,7 +272,7 @@ class EntryAdmin(admin.ModelAdmin):
         "term_gramm_class",
     ]
 
-    @admin.display(description="Cotext", ordering="cotext")
+    @admin.display(description=_("Cotext"), ordering="cotext")
     def edit_cotext(self, obj):
         cotext = obj.cotext
         full_text = cotext.display_text(full=True, id=False) if cotext else "No Cotext"
@@ -280,41 +281,37 @@ class EntryAdmin(admin.ModelAdmin):
             f"<span title='{full_text}'><a target='_blank' href='/admin/voc/cotext/{cotext.id}/change/?_to_field=id&_popup=1'>{short_text}</a></span>"
         )
 
-    @admin.display(description="Term", ordering="term")
+    @admin.display(description=_("Term"), ordering="term")
     def edit_term(self, obj):
         return format_html(
             f"<a target='_blank' href='/admin/voc/term/{obj.term.id}/change/?_to_field=id&_popup=1'>{obj}</a>"
         )
 
-    @admin.display(description="Phonetic Transcription", ordering="term")
+    @admin.display(description=_("Phonetic Transcription"), ordering="term")
     def phonetic_transcription(self, obj):
         return obj.term.phonetic_transcription
 
-    @admin.display(description="Term Definitions")
+    @admin.display(description=_("Term Definitions"))
     def term_definitions(self, obj):
         numbered_defs = [
             (index, obj) for index, obj in enumerate(obj.term_def.all(), 1)
         ]
         return pretty_numbered_text(numbered_defs)
 
-    @admin.display(description="Cotext date")
-    def date(self, obj):
-        return obj.cotext.text_date
-
-    @admin.display(description="Specific Characteristics")
+    @admin.display(description=_("Specific Characteristics"))
     def specific_chars(self, obj):
         return "; ".join([char.text for char in obj.specific_char.all()]) + "."
 
-    @admin.display(description="Trad. Term Definition")
+    @admin.display(description=_("Trad. Term Definition"))
     def trad_term_def(self, obj):
         if obj.trad_term:
             return obj.trad_term.definition
         return None
 
-    @admin.display(description="View On Site")
+    @admin.display(description=_("View On Site"))
     def view(self, obj):
-        return format_html(f"<a target='_blank' href={obj.get_absolute_url()}>View</a>")
+        return format_html(f"<a target='_blank' href={obj.get_absolute_url()}>" + _("View") + "</a>")
 
-    @admin.display(description="Edit")
+    @admin.display(description=_("Edit"))
     def edit(self, obj):
-        return "Edit"
+        return _("Edit")
