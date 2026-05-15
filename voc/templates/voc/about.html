@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block title %}{% blocktranslate %}About{% endblocktranslate %}{% endblock %}
+{% block extra_css %}{% endblock %}
+{% block content %}
+<section class="py-5">
+	<div class="container">
+		<div class="text-center">
+			<span class="text-muted">{% translate "About" context "title"%}</span>
+			<h2 class="display-5 fw-bold mb-3">Voclit</h2>
+		</div>
+		{% spaceless %}
+		<div class="row gx-5">
+			<div class="col-md-6">
+				<div class="lead text-center text-md-start">
+					<p>{% translate "The Writers’ Literary Vocabulary (Voclit) is a permanent terminological work that draws on artists' comments about their works and related themes. The corpus consists mainly of letters, diaries, interviews, and local journalistic essays by major writers of world literature." %}</p>
+					<p>{% translate "Voclit offers different search methods: by author, literary category or entry. It is available in Portuguese, with the possibility of translating the interface into English." %}</p>
+					<p>{% translate "It accepts and solicits collaboration from researchers, through expressions of interest addressed to " %}<a href="mailto:voclit@proton.me">voclit@proton.me</a>. {% translate "Messages regarding suggestions, inaccuracies, and problems with the site can also be sent to this contact." %}</p>
+				</div>
+			</div>
+			<div class="col-md-6">
+				<div class="lead text-center text-md-start">
+					<p>{% translate "Voclit was conceived in 2023 and its first online version was launched in 2025 at https://voclit.com.br. From 2024 to 2028, the project maintains an institutional link with the Postgraduate Program in Linguistic Studies at the Federal University of Uberlândia, under the guidance of Prof. Dr. Guilherme Fromm." %}</p>
+					<p>
+						{% translate "Maintenance and technical staff" %}:<br>
+						Camila de Lima Severino Borsato Mendonça – {% translate "Linguist" %}<br>
+						João Pedro Borsato Mendonça – {% translate "Website developer" %}</p>
+					<p>{% translate "Terminographic collaborators" %}:<br>
+						Camila de Lima Severino Borsato Mendonça</p>
+				</div>
+			</div>
+		{% endspaceless %}
+		</div>
+	</div>
+</section>
+{% endblock %}

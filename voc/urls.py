@@ -30,4 +30,6 @@ urlpatterns = [
     ),
     # Search
     path("search/", views.search, name="search"),
+    # About
+    path("about/", views.about, name="about"),
 ]

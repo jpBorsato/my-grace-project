@@ -239,3 +239,9 @@ def search(request):
             },
         },
     )
+
+def about(request):
+    return render(
+        request,
+        "voc/about.html"
+    )

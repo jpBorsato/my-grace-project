@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-05-14 19:26+0000\n"
+"POT-Creation-Date: 2026-05-15 19:54+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -32,6 +32,7 @@ msgid "Location"
 msgstr "Localização"
 
 #: voc/admin.py:120 voc/models.py:228 voc/models.py:234
+#: voc/templates/voc/entry_detail.html:33
 msgid "Definition"
 msgstr "Definição"
 
@@ -68,7 +69,7 @@ msgid "Entry Relations"
 msgstr "Relações Entre Verbetes"
 
 #: voc/admin.py:275 voc/models.py:108 voc/models.py:139 voc/models.py:374
-#: voc/templates/voc/entry_detail.html:43
+#: voc/templates/voc/entry_detail.html:44
 msgid "Cotext"
 msgstr "Cotexto"
 
@@ -132,7 +133,7 @@ msgstr "Autogerado se não fornecido."
 msgid "Author"
 msgstr "Autores"
 
-#: voc/models.py:44 voc/templates/base.html:37
+#: voc/models.py:44 voc/templates/base.html:41
 #: voc/templates/voc/author_list.html:3 voc/templates/voc/author_list.html:7
 msgid "Authors"
 msgstr "Autores"
@@ -193,7 +194,7 @@ msgstr "Citação pré-formatada opcional (e.g. APA ou ABNT)."
 msgid "Unknown author"
 msgstr "Autor desconhecido"
 
-#: voc/models.py:102 voc/templates/voc/entry_detail.html:46
+#: voc/models.py:102 voc/templates/voc/entry_detail.html:47
 msgid "Reference"
 msgstr "Referência"
 
@@ -387,38 +388,119 @@ msgstr "Verbetes"
 msgid "Vocabulário de Escritores de Literatura"
 msgstr "Vocabulário de Escritores de Literatura"
 
-#: voc/templates/base.html:41 voc/templates/voc/category_list.html:3
+#: voc/templates/base.html:37
+#| msgid "About"
+msgctxt "navbar"
+msgid "About"
+msgstr "Sobre"
+
+#: voc/templates/base.html:45 voc/templates/voc/category_list.html:3
 #: voc/templates/voc/category_list.html:7
 msgid "Categories"
 msgstr "Categorias"
 
-#: voc/templates/base.html:45 voc/templates/voc/entry_by_category_list.html:7
+#: voc/templates/base.html:49 voc/templates/voc/entry_by_category_list.html:7
 msgid "Entries by Category"
 msgstr "Verbetes por Categoria"
 
-#: voc/templates/base.html:49 voc/templates/voc/entry_list.html:7
+#: voc/templates/base.html:53 voc/templates/voc/entry_list.html:7
 msgid "Entries in alphabetical order"
 msgstr "Verbetes em ordem alfabética"
 
-#: voc/templates/base.html:53
+#: voc/templates/base.html:57
 msgid "Admin"
 msgstr "Administração"
 
-#: voc/templates/base.html:58
+#: voc/templates/base.html:62
 msgid "Sign In"
 msgstr "Identificar-se"
 
-#: voc/templates/base.html:75
+#: voc/templates/base.html:79
 msgid "Language"
 msgstr "Língua"
 
-#: voc/templates/base.html:86
+#: voc/templates/base.html:90
 msgid "Search by authors, entries or categories"
 msgstr "Procurar por autores, verbetes ou categorias"
 
-#: voc/templates/base.html:88
+#: voc/templates/base.html:92
 msgid "Search"
 msgstr "Procurar"
+
+#: voc/templates/voc/about.html:9
+#| msgid "About"
+msgctxt "title"
+msgid "About"
+msgstr "Sobre o"
+
+#: voc/templates/voc/about.html:16
+msgid ""
+"The Writers’ Literary Vocabulary (Voclit) is a permanent terminological work "
+"that draws on artists' comments about their works and related themes. The "
+"corpus consists mainly of letters, diaries, interviews, and local "
+"journalistic essays by major writers of world literature."
+msgstr ""
+"O Vocabulário de Escritores de Literatura (Voclit) é uma obra terminográfica "
+"permanente que tem como fonte os comentários dos artistas acerca de suas "
+"obras e temas afins. Os córpus são compostos principalmente por cartas, "
+"diários, entrevistas e ensaios jornalísticos locais dos grandes escritores "
+"da literatura universal."
+
+#: voc/templates/voc/about.html:17
+msgid ""
+"Voclit offers different search methods: by author, literary category or "
+"entry. It is available in Portuguese, with the possibility of translating "
+"the interface into English."
+msgstr ""
+"O Voclit oferece diferentes meios de busca: por autor, categoria literária "
+"ou verbete. É disponibilizado em língua portuguesa, havendo possibilidade de "
+"tradução da interface para o inglês."
+
+#: voc/templates/voc/about.html:18
+msgid ""
+"It accepts and solicits collaboration from researchers, through expressions "
+"of interest addressed to "
+msgstr ""
+"Aceita e solicita colaboração de pesquisadores, mediante manifestação de "
+"interesse endereçada a "
+
+#: voc/templates/voc/about.html:18
+msgid ""
+"Messages regarding suggestions, inaccuracies, and problems with the site can "
+"also be sent to this contact."
+msgstr ""
+"A esse contato também podem ser remetidas mensagens sobre sugestões, "
+"eventuais incorreções e problemas no site."
+
+#: voc/templates/voc/about.html:23
+msgid ""
+"Voclit was conceived in 2023 and its first online version was launched in "
+"2025 at https://voclit.com.br. From 2024 to 2028, the project maintains an "
+"institutional link with the Postgraduate Program in Linguistic Studies at "
+"the Federal University of Uberlândia, under the guidance of Prof. Dr. "
+"Guilherme Fromm."
+msgstr ""
+"O Voclit foi idealizado em 2023 e sua primeira versão on-line foi lançada em "
+"2025 sob o endereço https://voclit.com.br. No período de 2024 a 2028, o "
+"projeto mantém vínculo institucional com o Programa de Pós-Graduação em "
+"Estudos linguísticos da Universidade Federal de Uberlândia, sob orientação "
+"do Prof. Dr. Guilherme Fromm."
+
+#: voc/templates/voc/about.html:25
+msgid "Maintenance and technical staff"
+msgstr "Mantenedores e responsáveis técnicos"
+
+#: voc/templates/voc/about.html:26
+msgid "Linguist"
+msgstr "Linguista"
+
+#: voc/templates/voc/about.html:27
+msgid "Website developer"
+msgstr "Desenvolvedor do site"
+
+#: voc/templates/voc/about.html:28
+msgid "Terminographic collaborators"
+msgstr "Colaboradores terminográficos"
 
 #: voc/templates/voc/author_entry_list.html:3
 #: voc/templates/voc/author_entry_list.html:7
@@ -440,15 +522,15 @@ msgstr "Verbetes por Categorias"
 msgid "edit"
 msgstr "editar"
 
-#: voc/templates/voc/entry_detail.html:40
+#: voc/templates/voc/entry_detail.html:30
 msgid "Category"
 msgstr "Categoria"
 
-#: voc/templates/voc/entry_detail.html:60
+#: voc/templates/voc/entry_detail.html:61
 msgid "See also"
 msgstr "Veja também"
 
-#: voc/templates/voc/entry_detail.html:69
+#: voc/templates/voc/entry_detail.html:70
 msgid "by"
 msgstr "por"
 
