@@ -26,7 +26,11 @@
     <!-- ENTRY PHONETIC TRANSCRIPTION START -->
       {% if entry.term.phonetic_transcription %}{{ entry.term.phonetic_transcription }}.{% endif %}
     <!-- ENTRY PHONETIC TRANSCRIPTION END -->
+    <!-- ENTRY CATEGORY START -->
+      <strong>{% translate "Category" %}: </strong><a href="{% url 'entry-list' %}{% querystring category=entry.trad_term.slug %}">{{entry.trad_term|capfirst}}</a>.
+    <!-- ENTRY CATEGORY END -->
     <!-- ENTRY DEFINITIONS START -->
+      <strong>{% translate "Definition" %}: </strong>
       {% if entry.definitions|length <= 1 %}
           {{ entry.definitions.first }}
       {% else %}
@@ -36,9 +40,6 @@
         {% endfor %}
       {% endif %}
     <!-- ENTRY DEFINITIONS END -->
-    <!-- ENTRY CATEGORY START -->
-      <strong>{% translate "Category" %}: </strong><a href="{% url 'entry-list' %}{% querystring category=entry.trad_term.slug %}">{{entry.trad_term|capfirst}}</a>.
-    <!-- ENTRY CATEGORY END -->
     <!-- ENTRY COTEXT START -->
       <strong>{% translate "Cotext" %}: </strong>{{ entry.cotext.text }}.
     <!-- ENTRY COTEXT END -->
